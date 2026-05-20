@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لا تنخدع — Don't Be Fooled</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--red:#c0392b;--red-bright:#e74c3c;--red-dark:#7b241c;--black:#080808;--surface:#111;--surface2:#1a1a1a;--surface3:#222;--border:#2a2a2a;--text:#f0f0f0;--text-muted:#888;--text-dim:#555;--green:#27ae60;--green-light:#2ecc71;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--text);font-family:'Tajawal',sans-serif;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.5;}
+html[dir="ltr"] body{font-family:'Space Mono','Tajawal',sans-serif;}
+html[dir="ltr"] .ar{display:none!important;}
+html[dir="ltr"] .en{display:inline!important;}
+html[dir="rtl"] .ar{display:inline;}
+html[dir="rtl"] .en{display:none;}
+.en{display:none;}
+.page{display:none;min-height:100vh;}.page.active{display:block;}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(8,8,8,.96);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:0 1.5rem;height:62px;display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+.nav-logo{font-family:'Space Mono',monospace;font-size:12px;color:var(--red-bright);letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap;flex-shrink:0;cursor:pointer;}
+.nav-logo span{color:var(--text-muted);}
+.nav-links{display:flex;gap:1.4rem;list-style:none;}
+.nav-links a{font-size:13px;color:var(--text-muted);text-decoration:none;transition:color .2s;font-weight:500;cursor:pointer;white-space:nowrap;}
+.nav-links a:hover{color:var(--text);}
+.nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.lang-toggle{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;color:var(--text-muted);cursor:pointer;transition:all .2s;font-family:'Space Mono',monospace;letter-spacing:1px;}
+.lang-toggle:hover{border-color:var(--red);color:var(--text);}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 1.5rem 4rem;position:relative;overflow:hidden;}
+.hero-grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(192,57,43,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(192,57,43,.05) 1px,transparent 1px);background-size:55px 55px;animation:gridShift 18s linear infinite;}
+@keyframes gridShift{0%{background-position:0 0;}100%{background-position:55px 55px;}}
+.hero-glow{position:absolute;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(192,57,43,.14) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);animation:pulse 4s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.7;}50%{transform:translate(-50%,-50%) scale(1.18);opacity:1;}}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(192,57,43,.12);border:1px solid rgba(192,57,43,.3);padding:6px 18px;border-radius:100px;font-size:12px;color:var(--red-bright);font-family:'Space Mono',monospace;letter-spacing:1px;margin-bottom:2rem;animation:fadeUp .6s ease both;}
+.hero-badge::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--red-bright);animation:blink 1.2s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.15;}}
+.hero-title{font-size:clamp(3rem,9vw,6.5rem);font-weight:900;line-height:1.02;margin-bottom:1rem;animation:fadeUp .7s .1s ease both;}
+.ht-ar{display:block;color:var(--text);}
+.ht-en{display:block;color:var(--red-bright);font-family:'Space Mono',monospace;font-size:clamp(1.3rem,4vw,2.8rem);font-weight:700;letter-spacing:-1px;}
+.hero-sub{font-size:1rem;color:var(--text-muted);max-width:540px;line-height:1.85;margin-bottom:3rem;animation:fadeUp .7s .2s ease both;}
+.hero-cta-row{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:fadeUp .7s .3s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(26px);}to{opacity:1;transform:translateY(0);}}
+.floating-threats{position:absolute;inset:0;pointer-events:none;}
+.threat-chip{position:absolute;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:7px 13px;font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:7px;font-family:'Space Mono',monospace;white-space:nowrap;}
+.threat-chip .dot{width:6px;height:6px;border-radius:50%;background:var(--red-bright);}
+.chip1{top:22%;left:4%;animation:f1 6s ease-in-out infinite;}
+.chip2{top:36%;right:3%;animation:f2 7s ease-in-out infinite;}
+.chip3{bottom:27%;left:5%;animation:f3 5.5s ease-in-out infinite;}
+.chip4{bottom:40%;right:4%;animation:f1 8s ease-in-out infinite 1s;}
+.chip5{top:17%;right:17%;animation:f2 6.5s ease-in-out infinite .5s;}
+@keyframes f1{0%,100%{transform:translateY(0) rotate(-1deg);}50%{transform:translateY(-15px) rotate(1deg);}}
+@keyframes f2{0%,100%{transform:translateY(0) rotate(1deg);}50%{transform:translateY(-11px) rotate(-1.5deg);}}
+@keyframes f3{0%,100%{transform:translateY(0);}50%{transform:translateY(-19px) rotate(.5deg);}}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-dim);font-size:10px;animation:fadeUp 1s .9s ease both;font-family:'Space Mono',monospace;letter-spacing:1px;}
+.scroll-arrow{width:20px;height:30px;border:1.5px solid var(--border);border-radius:10px;display:flex;align-items:flex-start;justify-content:center;padding-top:4px;}
+.scroll-arrow::after{content:'';width:3px;height:6px;background:var(--text-dim);border-radius:2px;animation:sb 1.4s ease-in-out infinite;}
+@keyframes sb{0%,100%{transform:translateY(0);opacity:.5;}50%{transform:translateY(8px);opacity:1;}}
+.btn-primary{background:var(--red);color:#fff;border:none;border-radius:10px;padding:.85rem 1.8rem;font-size:1rem;font-weight:700;font-family:'Tajawal',sans-serif;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px;}
+.btn-primary:hover{background:var(--red-bright);transform:translateY(-2px);box-shadow:0 10px 28px rgba(192,57,43,.4);}
+.btn-secondary{background:transparent;color:var(--text-muted);border:1px solid var(--border);border-radius:10px;padding:.85rem 1.8rem;font-size:1rem;font-weight:600;font-family:'Tajawal',sans-serif;cursor:pointer;transition:all .2s;}
+.btn-secondary:hover{border-color:var(--text-muted);color:var(--text);}
+section{padding:4rem 1.5rem;max-width:1100px;margin:0 auto;}
+.section-label{display:inline-flex;align-items:center;gap:8px;font-family:'Space Mono',monospace;font-size:11px;color:var(--red-bright);letter-spacing:2px;text-transform:uppercase;margin-bottom:1rem;}
+.section-label::before{content:'//';color:var(--red-dark);}
+.section-title{font-size:clamp(1.6rem,3.5vw,2.8rem);font-weight:800;line-height:1.15;margin-bottom:1rem;}
+.section-title em{color:var(--red-bright);font-style:normal;}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:3rem auto;max-width:1100px;padding:0 1.5rem;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem;text-align:center;transition:border-color .2s,transform .2s;}
+.stat-card:hover{border-color:var(--red-dark);transform:translateY(-2px);}
+.stat-num{font-size:2.5rem;font-weight:900;color:var(--red-bright);font-family:'Space Mono',monospace;line-height:1;margin-bottom:.3rem;}
+.stat-label{font-size:.82rem;color:var(--text-muted);line-height:1.5;}
+.phishing-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2rem;}
+.phishing-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.4rem;transition:border-color .2s,transform .2s;}
+.phishing-card:hover{border-color:var(--red-dark);transform:translateY(-3px);}
+.pc-icon{font-size:1.9rem;margin-bottom:.7rem;}
+.phishing-card h3{font-size:1rem;font-weight:700;margin-bottom:.4rem;}
+.phishing-card h3 span{color:var(--red-bright);}
+.phishing-card p{font-size:.85rem;color:var(--text-muted);line-height:1.75;}
+.phishing-card.highlight{grid-column:span 2;background:linear-gradient(135deg,rgba(192,57,43,.1) 0%,rgba(17,17,17,0) 60%);border-color:rgba(192,57,43,.3);}
+.trick-timeline{display:flex;flex-direction:column;margin-top:2rem;}
+.trick-step{display:grid;grid-template-columns:1fr 52px;gap:1rem;align-items:flex-start;padding:1.4rem 0;border-bottom:1px solid var(--border);}
+.trick-step:last-child{border-bottom:none;}
+.tc-badge{font-family:'Space Mono',monospace;font-size:10px;color:var(--red-bright);letter-spacing:1px;text-transform:uppercase;margin-bottom:.4rem;display:block;}
+.trick-content h3{font-size:1rem;font-weight:700;margin-bottom:.4rem;}
+.trick-content p{font-size:.85rem;color:var(--text-muted);line-height:1.75;}
+.step-num{width:40px;height:40px;border-radius:50%;background:var(--red);color:#fff;font-weight:800;font-size:.9rem;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;flex-shrink:0;position:relative;z-index:1;}
+.protect-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-top:2rem;}
+.protect-item{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.3rem;display:flex;gap:1rem;align-items:flex-start;transition:border-color .2s,transform .2s;}
+.protect-item:hover{border-color:var(--green);transform:translateY(-2px);}
+.pi-icon{width:44px;height:44px;border-radius:10px;background:rgba(39,174,96,.12);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.pi-content h4{font-size:.93rem;font-weight:700;margin-bottom:.3rem;}
+.pi-content p{font-size:.82rem;color:var(--text-muted);line-height:1.65;}
+.quiz-cta-section{background:var(--surface);border:1px solid rgba(192,57,43,.3);border-radius:20px;padding:4rem 1.5rem;text-align:center;margin:3rem auto;max-width:1100px;position:relative;overflow:hidden;}
+.quiz-cta-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(192,57,43,.09) 0%,transparent 70%);pointer-events:none;}
+.quiz-cta-section h2{font-size:clamp(1.5rem,3.5vw,2.3rem);font-weight:900;margin-bottom:.7rem;}
+.quiz-cta-section > p{color:var(--text-muted);margin-bottom:1.8rem;font-size:.95rem;line-height:1.75;max-width:480px;margin-left:auto;margin-right:auto;}
+.quiz-features{display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap;margin-bottom:2rem;}
+.qf-item{display:flex;align-items:center;gap:6px;font-size:.83rem;color:var(--text-muted);}
+.qf-item::before{content:'checkmark';font-size:0;}
+.qf-item::after{content:' ✓';color:var(--green-light);font-weight:700;order:-1;font-size:.83rem;}
+.live-counter-strip{background:rgba(192,57,43,.07);border:1px solid rgba(192,57,43,.2);border-radius:14px;padding:1.1rem 1.5rem;margin:0 1.5rem 2rem;max-width:1100px;margin-left:auto;margin-right:auto;display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;}
+.lc-num{font-family:'Space Mono',monospace;font-size:1.6rem;font-weight:700;color:var(--red-bright);}
+.lc-label{font-size:.88rem;color:var(--text-muted);}
+.lc-dot{width:8px;height:8px;border-radius:50%;background:var(--green-light);animation:blink 1.5s ease-in-out infinite;flex-shrink:0;}
+.full-divider{height:1px;background:var(--border);margin:0 1.5rem;}
+footer{border-top:1px solid var(--border);padding:1.5rem;text-align:center;font-size:.78rem;color:var(--text-dim);font-family:'Space Mono',monospace;}
+footer span{color:var(--red-bright);}
+.quiz-page-wrapper{min-height:100vh;padding:5rem 1.5rem 3rem;max-width:720px;margin:0 auto;}
+.quiz-top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;gap:1rem;flex-wrap:wrap;}
+.q-counter{font-family:'Space Mono',monospace;font-size:11px;color:var(--text-muted);letter-spacing:1px;display:block;}
+.q-title{font-size:.95rem;font-weight:700;}
+.score-live{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.45rem .9rem;font-family:'Space Mono',monospace;font-size:.82rem;color:var(--red-bright);display:flex;align-items:center;gap:6px;white-space:nowrap;}
+.progress-track{height:4px;background:var(--surface3);border-radius:2px;margin-bottom:1.5rem;overflow:hidden;}
+.progress-fill{height:100%;background:var(--red);border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+.question-panel{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:1rem;animation:slideIn .35s ease both;}
+@keyframes slideIn{from{opacity:0;transform:translateX(18px);}to{opacity:1;transform:translateX(0);}}
+.qp-type{background:var(--red);padding:.5rem 1.2rem;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;font-family:'Space Mono',monospace;}
+.qp-body{padding:1.3rem;}
+.qp-question{font-size:1rem;font-weight:700;line-height:1.55;margin-bottom:1rem;}
+.qp-scenario{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:.9rem 1.1rem;margin-bottom:1.1rem;line-height:1.75;font-family:'Space Mono',monospace;font-size:.79rem;color:var(--text-muted);}
+.sc-from{font-weight:700;color:var(--red-bright);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:.6rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);}
+.sc-block{display:block;margin-top:7px;word-break:break-all;color:var(--red-bright);font-size:.75rem;}
+.options-list{display:flex;flex-direction:column;gap:8px;}
+.opt-btn{background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:.82rem 1rem;font-size:.88rem;color:var(--text);font-family:'Tajawal',sans-serif;font-weight:500;text-align:right;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:10px;width:100%;}
+.opt-btn:hover:not(:disabled){border-color:var(--red-dark);background:rgba(192,57,43,.07);}
+.opt-btn:disabled{cursor:not-allowed;}
+.opt-btn.correct{background:rgba(39,174,96,.12);border-color:var(--green);color:var(--green-light);}
+.opt-btn.wrong{background:rgba(192,57,43,.12);border-color:var(--red);color:#ef9a9a;}
+.opt-letter{width:28px;height:28px;border-radius:6px;background:var(--surface3);color:var(--text-muted);font-family:'Space Mono',monospace;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .18s;}
+.opt-btn.correct .opt-letter{background:var(--green);color:#fff;}
+.opt-btn.wrong .opt-letter{background:var(--red);color:#fff;}
+.feedback-panel{margin-top:1rem;padding:.9rem 1.1rem;border-radius:10px;font-size:.86rem;line-height:1.7;display:none;animation:fadeUp .3s ease both;}
+.feedback-panel.show{display:block;}
+.feedback-panel.correct{background:rgba(39,174,96,.1);border:1px solid rgba(39,174,96,.3);color:#a8e6be;}
+.feedback-panel.wrong{background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.3);color:#f5a9a9;}
+.quiz-nav{display:flex;justify-content:flex-end;margin-top:1rem;}
+.btn-next{background:var(--red);color:#fff;border:none;border-radius:10px;padding:.75rem 1.8rem;font-size:.92rem;font-weight:700;font-family:'Tajawal',sans-serif;cursor:pointer;display:none;align-items:center;gap:8px;transition:all .2s;}
+.btn-next.show{display:inline-flex;}
+.btn-next:hover{background:var(--red-bright);transform:translateY(-1px);}
+.results-wrapper{min-height:100vh;padding:5rem 1.5rem 3rem;max-width:820px;margin:0 auto;}
+.results-hero{text-align:center;margin-bottom:2.5rem;}
+.results-circle{width:140px;height:140px;border-radius:50%;border:4px solid var(--red);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 1.5rem;position:relative;}
+.results-circle::before{content:'';position:absolute;inset:-9px;border-radius:50%;border:1px solid rgba(192,57,43,.2);}
+.results-circle::after{content:'';position:absolute;inset:-18px;border-radius:50%;border:1px solid rgba(192,57,43,.08);}
+.rc-score{font-size:2.9rem;font-weight:900;color:var(--text);font-family:'Space Mono',monospace;line-height:1;}
+.rc-total{font-size:.95rem;color:var(--text-muted);font-family:'Space Mono',monospace;}
+.results-hero h2{font-size:1.9rem;font-weight:900;margin-bottom:.5rem;}
+.rh-msg{color:var(--text-muted);font-size:.92rem;line-height:1.75;max-width:500px;margin:0 auto 2rem;}
+.results-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;}
+.rm-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.1rem;text-align:center;}
+.rm-val{font-size:2rem;font-weight:900;font-family:'Space Mono',monospace;margin-bottom:4px;}
+.rm-label{font-size:.78rem;color:var(--text-muted);}
+.rm-card.good .rm-val{color:var(--green-light);}
+.rm-card.bad .rm-val{color:var(--red-bright);}
+.rm-card.neutral .rm-val{color:var(--text);}
+.share-bar{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.2rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+.sb-text{font-size:.88rem;color:var(--text-muted);}
+.sb-text strong{color:var(--text);display:block;font-size:.95rem;margin-bottom:2px;}
+.share-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.share-btn{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.45rem .9rem;font-size:.8rem;font-weight:700;color:var(--text-muted);cursor:pointer;transition:all .2s;font-family:'Space Mono',monospace;}
+.share-btn:hover{border-color:var(--red);color:var(--text);}
+.share-btn.copied{border-color:var(--green);color:var(--green-light);}
+.participants-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.8rem;margin-bottom:1.5rem;text-align:center;position:relative;overflow:hidden;}
+.participants-box::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(192,57,43,.05) 0%,transparent 70%);pointer-events:none;}
+.pb-num{font-size:3.8rem;font-weight:900;font-family:'Space Mono',monospace;color:var(--red-bright);line-height:1;margin-bottom:.4rem;}
+.pb-label{font-size:.9rem;color:var(--text-muted);}
+.pb-sub{font-size:.8rem;color:var(--text-dim);margin-top:.6rem;font-family:'Space Mono',monospace;}
+.score-tips{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.4rem;margin-bottom:1.5rem;}
+.score-tips h3{font-size:1rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:8px;}
+.tips-list{display:flex;flex-direction:column;gap:8px;}
+.tip-row{display:flex;align-items:flex-start;gap:10px;background:var(--surface2);border-radius:10px;padding:.8rem 1rem;}
+.tip-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px;}
+.tip-row p{font-size:.84rem;color:var(--text-muted);line-height:1.65;}
+.tip-row p strong{color:var(--text);font-weight:700;display:block;margin-bottom:2px;}
+.review-section{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.4rem;margin-bottom:1.5rem;}
+.review-section h3{font-size:1rem;font-weight:700;margin-bottom:1rem;}
+.review-list{display:flex;flex-direction:column;gap:8px;}
+.review-item{background:var(--surface2);border-radius:10px;padding:.85rem 1rem;border-right:3px solid var(--border);}
+.review-item.rev-correct{border-right-color:var(--green);}
+.review-item.rev-wrong{border-right-color:var(--red);}
+.rev-q{font-size:.85rem;font-weight:700;margin-bottom:.3rem;}
+.rev-a{font-size:.8rem;color:var(--text-muted);margin-top:2px;}
+.rev-badge{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:20px;margin-bottom:.4rem;}
+.rev-badge.correct{background:rgba(39,174,96,.15);color:var(--green-light);}
+.rev-badge.wrong{background:rgba(192,57,43,.15);color:var(--red-bright);}
+.results-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:.5rem;}
+@media(max-width:700px){
+  .threat-chip{display:none;}
+  .phishing-card.highlight{grid-column:span 1;}
+  .phishing-grid{grid-template-columns:1fr;}
+  .stats-row{grid-template-columns:1fr;}
+  .results-metrics{grid-template-columns:1fr 1fr;}
+  .trick-timeline::before{display:none;}
+  .trick-step{grid-template-columns:1fr 44px;}
+  nav{padding:0 1rem;}
+  .nav-links{gap:.9rem;}
+  .nav-links a{font-size:12px;}
+  .nav-logo{font-size:10px;}
+  .share-bar{flex-direction:column;align-items:flex-start;}
+}
+@media(max-width:480px){
+  .nav-links li:nth-child(n+3){display:none;}
+  .hero-title{font-size:2.6rem;}
+  .ht-en{font-size:1.3rem;}
+  .results-metrics{grid-template-columns:1fr;}
+  .pb-num{font-size:2.8rem;}
+}
+
+/* FAKE VS REAL */
+.fvr-section{padding:4rem 1.5rem;max-width:1100px;margin:0 auto;}
+.fvr-grid{display:flex;flex-direction:column;gap:1.5rem;margin-top:2rem;}
+.fvr-item{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.fvr-header{background:var(--surface2);padding:.75rem 1.2rem;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);}
+.fvr-brand{font-size:.85rem;font-weight:700;color:var(--text);}
+.fvr-brand-icon{font-size:1.2rem;}
+.fvr-cols{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+.fvr-col{padding:1.1rem 1.3rem;}
+.fvr-col.real{border-left:1px solid var(--border);}
+html[dir="rtl"] .fvr-col.real{border-left:none;border-right:1px solid var(--border);}
+.fvr-col-label{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;font-family:'Space Mono',monospace;margin-bottom:.7rem;display:flex;align-items:center;gap:6px;}
+.fvr-col.fake .fvr-col-label{color:var(--red-bright);}
+.fvr-col.real .fvr-col-label{color:var(--green-light);}
+.fvr-url{font-family:'Space Mono',monospace;font-size:.78rem;padding:.55rem .8rem;border-radius:8px;margin-bottom:.6rem;word-break:break-all;display:flex;align-items:center;gap:6px;line-height:1.5;}
+.fvr-col.fake .fvr-url{background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.3);color:#ef9a9a;}
+.fvr-col.real .fvr-url{background:rgba(39,174,96,.1);border:1px solid rgba(39,174,96,.3);color:#a8e6be;}
+.fvr-flags{display:flex;flex-direction:column;gap:5px;}
+.fvr-flag{font-size:.78rem;color:var(--text-muted);display:flex;align-items:flex-start;gap:6px;line-height:1.5;}
+.fvr-col.fake .fvr-flag::before{content:'⚠';flex-shrink:0;}
+.fvr-col.real .fvr-flag::before{content:'✓';color:var(--green-light);flex-shrink:0;}
+@media(max-width:600px){.fvr-cols{grid-template-columns:1fr;}.fvr-col.real{border-right:none;border-top:1px solid var(--border);}html[dir="rtl"] .fvr-col.real{border-right:none;border-top:1px solid var(--border);}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">لا تنخدع <span>/ DBF</span></div>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')" class="ar">الرئيسية</a><a onclick="showPage('home')" class="en">Home</a></li>
+    <li><a onclick="navScroll('what-section')" class="ar">ما هو؟</a><a onclick="navScroll('what-section')" class="en">What is it?</a></li>
+    <li><a onclick="navScroll('protect-section')" class="ar">الحماية</a><a onclick="navScroll('protect-section')" class="en">Protection</a></li>
+    <li><a onclick="startQuiz()" class="ar">الاختبار</a><a onclick="startQuiz()" class="en">Quiz</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="lang-toggle" onclick="toggleLang()" id="lang-btn">EN</button>
+  </div>
+</nav>
+<div id="home-page" class="page active">
+  <div class="hero">
+    <div class="hero-grid-bg"></div>
+    <div class="hero-glow"></div>
+    <div class="floating-threats">
+      <div class="threat-chip chip1"><div class="dot"></div>SMS Phishing</div>
+      <div class="threat-chip chip2"><div class="dot"></div>Social Engineering</div>
+      <div class="threat-chip chip3"><div class="dot"></div>OTP Steal</div>
+      <div class="threat-chip chip4"><div class="dot"></div>Fake Login Page</div>
+      <div class="threat-chip chip5"><div class="dot"></div>Spoofed Email</div>
+    </div>
+    <div class="hero-badge"><span class="ar">حملة التوعية الأمنية</span><span class="en">Security Awareness Campaign</span></div>
+    <h1 class="hero-title"><span class="ht-ar">لا تنخدع</span><span class="ht-en">Don't Be Fooled</span></h1>
+    <p class="hero-sub ar">91% من الهجمات الإلكترونية تبدأ برسالة واحدة. تعلّم كيف تكتشف التصيد الاحتيالي قبل أن تقع ضحية له.</p>
+    <p class="hero-sub en">91% of cyberattacks begin with a single message. Learn how to spot phishing before you become a victim.</p>
+    <div class="hero-cta-row">
+      <button class="btn-primary" onclick="startQuiz()">🎯 <span class="ar">اختبر نفسك الآن</span><span class="en">Test Yourself Now</span></button>
+      <button class="btn-secondary" onclick="navScroll('what-section')"><span class="ar">تعلّم أولاً ←</span><span class="en">← Learn First</span></button>
+    </div>
+    <div class="scroll-hint"><div class="scroll-arrow"></div>SCROLL</div>
+  </div>
+  <div class="live-counter-strip">
+    <div class="lc-dot"></div>
+    <span class="lc-num" id="home-counter">...</span>
+    <span class="lc-label ar">شخص أكمل هذا الاختبار حتى الآن</span>
+    <span class="lc-label en">people have completed this quiz so far</span>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num">91%</div><div class="stat-label ar">من الهجمات تبدأ برسالة تصيد</div><div class="stat-label en">of attacks start with phishing</div></div>
+    <div class="stat-card"><div class="stat-num">3.4B</div><div class="stat-label ar">رسالة احتيالية يومياً حول العالم</div><div class="stat-label en">phishing emails sent every day</div></div>
+    <div class="stat-card"><div class="stat-num">97%</div><div class="stat-label ar">من المستخدمين لا يتعرفون على التصيد المتطور</div><div class="stat-label en">of users can't spot sophisticated phishing</div></div>
+  </div>
+  <section id="what-section">
+    <div class="section-label ar">التصيد الاحتيالي</div><div class="section-label en">Phishing</div>
+    <h2 class="section-title"><span class="ar">ما هو <em>التصيد الاحتيالي</em>؟</span><span class="en">What is <em>Phishing</em>?</span></h2>
+    <p style="color:var(--text-muted);max-width:620px;line-height:1.85;margin-bottom:.5rem;"><span class="ar">التصيد الاحتيالي هو هجوم إلكتروني يُقنعك فيه المهاجم بأنه جهة موثوقة لسرقة بياناتك دون أن تشعر.</span><span class="en">Phishing is a cyberattack where the attacker impersonates a trusted entity to steal your data without you realizing it.</span></p>
+    <div class="phishing-grid">
+      <div class="phishing-card highlight"><div class="pc-icon">🎣</div><h3><span class="ar">الفكرة الأساسية</span><span class="en">The Core Idea</span></h3><p><span class="ar">المهاجم لا يخترق جهازك — يخترق <span style="color:var(--red-bright)">تفكيرك</span>. يستغل ثقتك وخوفك وإحساسك بالإلحاح ليجعلك تتصرف دون تفكير.</span><span class="en">The attacker doesn't hack your device — they hack <span style="color:var(--red-bright)">your mind</span>. They exploit your trust, fear, and urgency to make you act without thinking.</span></p></div>
+      <div class="phishing-card"><div class="pc-icon">📱</div><h3><span class="ar">رسائل SMS</span><span class="en">SMS</span> <span>(Smishing)</span></h3><p><span class="ar">رسائل نصية مزيفة من بنكك أو SADAD تطلب الضغط على رابط فوراً.</span><span class="en">Fake SMS messages appearing to be from your bank or SADAD asking you to click a link immediately.</span></p></div>
+      <div class="phishing-card"><div class="pc-icon">📞</div><h3><span class="ar">مكالمات احتيالية</span><span class="en">Voice Calls</span> <span>(Vishing)</span></h3><p><span class="ar">شخص يدّعي أنه من البنك ويطلب رمز OTP لـ"حماية حسابك".</span><span class="en">Someone calling claiming to be from your bank asking for your OTP to "protect your account".</span></p></div>
+      <div class="phishing-card"><div class="pc-icon">📧</div><h3><span class="ar">البريد الإلكتروني</span><span class="en">Email</span> <span>(Spoofing)</span></h3><p><span class="ar">رسائل بريد رسمية المظهر تحتوي على روابط لصفحات تسجيل دخول مزيفة.</span><span class="en">Officially-looking emails containing links to fake login pages that steal your credentials.</span></p></div>
+      <div class="phishing-card"><div class="pc-icon">💬</div><h3><span class="ar">سوشيال ميديا</span><span class="en">Social Media</span></h3><p><span class="ar">رسائل WhatsApp بجوائز وهمية وعروض مغرية تطلب إدخال بياناتك.</span><span class="en">WhatsApp messages with fake prizes and tempting offers requesting your personal data.</span></p></div>
+      <div class="phishing-card"><div class="pc-icon">🔒</div><h3><span class="ar">خداع HTTPS</span><span class="en">HTTPS Deception</span> <span>(TLS)</span></h3><p><span class="ar">قفل HTTPS لا يعني أن الموقع حقيقي — المهاجمون يحصلون على شهادات TLS بسهولة.</span><span class="en">The HTTPS padlock doesn't mean the site is legitimate — attackers freely obtain TLS certificates.</span></p></div>
+    </div>
+  </section>
+  <div class="full-divider"></div>
+  <section>
+    <div class="section-label ar">أسلوب الهجوم</div><div class="section-label en">Attack Method</div>
+    <h2 class="section-title"><span class="ar">كيف <em>يخدعونك</em>؟</span><span class="en">How do they <em>trick you</em>?</span></h2>
+    <div class="trick-timeline">
+      <div class="trick-step"><div class="trick-content"><span class="tc-badge"><span class="ar">الخطوة الأولى</span><span class="en">Step 01</span></span><h3><span class="ar">الإيقاع والإلحاح</span><span class="en">Urgency & Fear</span></h3><p><span class="ar">"حسابك سيُوقف خلال ساعتين!" — مصمم لإيقاف تفكيرك وجعلك تتصرف فوراً.</span><span class="en">"Your account will be suspended in 2 hours!" — designed to stop your critical thinking immediately.</span></p></div><div class="step-num">01</div></div>
+      <div class="trick-step"><div class="trick-content"><span class="tc-badge"><span class="ar">الخطوة الثانية</span><span class="en">Step 02</span></span><h3><span class="ar">انتحال الهوية</span><span class="en">Impersonation</span></h3><p><span class="ar">شعارات وأسماء مألوفة — البنك الأهلي، STC، SADAD. نطاقات مشابهة جداً للأصلية.</span><span class="en">Familiar logos and names — Al Ahli Bank, STC, SADAD. Domains almost identical to the original.</span></p></div><div class="step-num">02</div></div>
+      <div class="trick-step"><div class="trick-content"><span class="tc-badge"><span class="ar">الخطوة الثالثة</span><span class="en">Step 03</span></span><h3><span class="ar">الصفحة المزيفة</span><span class="en">Fake Page</span></h3><p><span class="ar">صفحة طبق الأصل من الموقع الحقيقي حتى مع HTTPS والقفل. الفرق الوحيد هو النطاق.</span><span class="en">A page identical to the real website — even with HTTPS and the padlock. Only the domain differs.</span></p></div><div class="step-num">03</div></div>
+      <div class="trick-step"><div class="trick-content"><span class="tc-badge"><span class="ar">الخطوة الرابعة</span><span class="en">Step 04</span></span><h3><span class="ar">سرقة بياناتك</span><span class="en">Data Theft</span></h3><p><span class="ar">بمجرد إدخالك لبياناتك يحصل المهاجم على كل شيء — يستخدمها فوراً أو يبيعها.</span><span class="en">Once you enter your data the attacker has everything — used immediately or sold on dark markets.</span></p></div><div class="step-num">04</div></div>
+    </div>
+  </section>
+
+  <div class="full-divider"></div>
+
+  <!-- FAKE VS REAL -->
+  <section class="fvr-section">
+    <div class="section-label ar">حقيقي أم مزيف؟</div><div class="section-label en">Real or Fake?</div>
+    <h2 class="section-title"><span class="ar">تعلّم <em>الفرق</em> بنظرة واحدة</span><span class="en">Spot the <em>Difference</em> at a Glance</span></h2>
+    <p style="color:var(--text-muted);max-width:620px;line-height:1.85;margin-bottom:.5rem;"><span class="ar">المهاجمون يستخدمون مواقع تشبه المواقع الحقيقية بشكل مقنع. الفرق يكون في حرف واحد أو كلمة زيادة في النطاق.</span><span class="en">Attackers create sites that look convincingly similar to real ones. The difference is often just one letter or extra word in the domain.</span></p>
+    <div class="fvr-grid">
+
+      <!-- ABSHIR -->
+      <div class="fvr-item">
+        <div class="fvr-header">
+          <span class="fvr-brand-icon">🏛️</span>
+          <span class="fvr-brand"><span class="ar">أبشر — بوابة الخدمات الحكومية السعودية</span><span class="en">Absher — Saudi Government Services Portal</span></span>
+        </div>
+        <div class="fvr-cols">
+          <div class="fvr-col fake">
+            <div class="fvr-col-label">⚠ <span class="ar">مزيف</span><span class="en">Fake</span></div>
+            <div class="fvr-url">🔒 absher-gov.com/login</div>
+            <div class="fvr-flags">
+              <div class="fvr-flag"><span class="ar">النطاق absher-gov.com مسجّل من قِبَل مجهول</span><span class="en">Domain absher-gov.com registered by unknown party</span></div>
+              <div class="fvr-flag"><span class="ar">حرف ناقص: الأصلي absher.sa وليس absher-gov.com</span><span class="en">Different domain: real is absher.sa not absher-gov.com</span></div>
+              <div class="fvr-flag"><span class="ar">يطلب رقمك الوطني وكلمة المرور معاً في نفس الصفحة</span><span class="en">Asks for national ID and password together on one page</span></div>
+            </div>
+          </div>
+          <div class="fvr-col real">
+            <div class="fvr-col-label">✓ <span class="ar">حقيقي</span><span class="en">Real</span></div>
+            <div class="fvr-url">🔒 absher.sa</div>
+            <div class="fvr-flags">
+              <div class="fvr-flag"><span class="ar">النطاق الرسمي ينتهي بـ .sa فقط</span><span class="en">Official domain ends with .sa only</span></div>
+              <div class="fvr-flag"><span class="ar">تسجيل الدخول عبر النفاذ الوطني</span><span class="en">Login via National Access (Nafaz)</span></div>
+              <div class="fvr-flag"><span class="ar">لا يطلب OTP عبر الهاتف أبداً</span><span class="en">Never requests OTP via phone call</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NAFAZ -->
+      <div class="fvr-item">
+        <div class="fvr-header">
+          <span class="fvr-brand-icon">🔐</span>
+          <span class="fvr-brand"><span class="ar">نفاذ — الهوية الرقمية الوطنية</span><span class="en">Nafaz — National Digital Identity</span></span>
+        </div>
+        <div class="fvr-cols">
+          <div class="fvr-col fake">
+            <div class="fvr-col-label">⚠ <span class="ar">مزيف</span><span class="en">Fake</span></div>
+            <div class="fvr-url">🔒 nafath-id-verify.com/renew</div>
+            <div class="fvr-flags">
+              <div class="fvr-flag"><span class="ar">اسم الموقع nafath بدلاً من nafaz — خلط مقصود بين الاسمين</span><span class="en">Site name nafath instead of nafaz — deliberate confusion</span></div>
+              <div class="fvr-flag"><span class="ar">يدّعي أن هويتك انتهت صلاحيتها وتحتاج تجديد فوري</span><span class="en">Claims your identity expired and needs immediate renewal</span></div>
+              <div class="fvr-flag"><span class="ar">يطلب صورة بطاقة الهوية الوطنية</span><span class="en">Requests a photo of your national ID card</span></div>
+            </div>
+          </div>
+          <div class="fvr-col real">
+            <div class="fvr-col-label">✓ <span class="ar">حقيقي</span><span class="en">Real</span></div>
+            <div class="fvr-url">🔒 nafaz.gov.sa</div>
+            <div class="fvr-flags">
+              <div class="fvr-flag"><span class="ar">النطاق الرسمي nafaz.gov.sa — دائماً .gov.sa</span><span class="en">Official domain is nafaz.gov.sa — always .gov.sa</span></div>
+              <div class="fvr-flag"><span class="ar">التحقق يتم داخل التطبيق فقط على جهازك</span><span class="en">Verification happens inside the app only on your device</span></div>
+              <div class="fvr-flag"><span class="ar">لا يطلب صور الهوية عبر مواقع خارجية</span><span class="en">Never requests ID photos through external websites</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AMAZON -->
+      <div class="fvr-item">
+        <div class="fvr-header">
+          <span class="fvr-brand-icon">📦</span>
+          <span class="fvr-brand"><span class="ar">أمازون — منصة التسوق الإلكتروني</span><span class="en">Amazon — E-commerce Platform</span></span>
+        </div>
+        <div class="fvr-cols">
+          <div class="fvr-col fake">
+            <div class="fvr-col-label">⚠ <span class="ar">مزيف</span><span class="en">Fake</span></div>
+            <div class="fvr-url">🔒 amazon-delivery-sa.com/track</div>
+            <div class="fvr-flags">
+              <div class="fvr-flag"><span class="ar">النطاق amazon-delivery-sa.com ليس من أمازون</span><span class="en">Domain amazon-delivery-sa.com is not owned by Amazon</span></div>
+              <div class="fvr-flag"><span class="ar">رسالة: "طردك احتجز في الجمارك، ادفع 15 ريال"</span><span class="en">Message: "Your package held at customs, pay 15 SAR"</span></div>
+              <div class="fvr-flag"><span class="ar">يطلب بيانات بطاقة الائتمان لـ"رسوم التخليص"</span><span class="en">Requests credit card for "clearance fees"</span></div>
+            </div>
+          </div>
+          <div class="fvr-col real">
+            <div class="fvr-col-label">✓ <span class="ar">حقيقي</span><span class="en">Real</span></div>
+            <div class="fvr-url">🔒 amazon.sa</div>
+            <div class="fvr-flags">
+              <div class="fvr-flag"><span class="ar">النطاق الرسمي amazon.sa أو amazon.com فقط</span><span class="en">Official domain is amazon.sa or amazon.com only</span></div>
+              <div class="fvr-flag"><span class="ar">تتبع الطلبات داخل التطبيق أو الموقع الرسمي فقط</span><span class="en">Track orders only inside the official app or website</span></div>
+              <div class="fvr-flag"><span class="ar">أمازون لا تطلب رسوم جمارك عبر SMS أبداً</span><span class="en">Amazon never requests customs fees via SMS</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STCPAY -->
+      <div class="fvr-item">
+        <div class="fvr-header">
+          <span class="fvr-brand-icon">💳</span>
+          <span class="fvr-brand"><span class="ar">STC Pay — المحفظة الرقمية</span><span class="en">STC Pay — Digital Wallet</span></span>
+        </div>
+        <div class="fvr-cols">
+          <div class="fvr-col fake">
+            <div class="fvr-col-label">⚠ <span class="ar">مزيف</span><span class="en">Fake</span></div>
+            <div class="fvr-url">🔒 stc-pay-ksa.verify-now.net</div>
+            <div class="fvr-flags">
+              <div class="fvr-flag"><span class="ar">النطاق verify-now.net مسجّل في دولة مجهولة</span><span class="en">Domain verify-now.net registered in unknown country</span></div>
+              <div class="fvr-flag"><span class="ar">يدّعي أن محفظتك ستُعلّق بسبب "نشاط مشبوه"</span><span class="en">Claims your wallet will be suspended due to "suspicious activity"</span></div>
+              <div class="fvr-flag"><span class="ar">يطلب رمز OTP لـ"التحقق من هويتك"</span><span class="en">Requests OTP to "verify your identity"</span></div>
+            </div>
+          </div>
+          <div class="fvr-col real">
+            <div class="fvr-col-label">✓ <span class="ar">حقيقي</span><span class="en">Real</span></div>
+            <div class="fvr-url">🔒 stcpay.com.sa</div>
+            <div class="fvr-flags">
+              <div class="fvr-flag"><span class="ar">النطاق الرسمي stcpay.com.sa دائماً</span><span class="en">Official domain is always stcpay.com.sa</span></div>
+              <div class="fvr-flag"><span class="ar">التحقق يتم داخل التطبيق فقط</span><span class="en">Verification happens only inside the official app</span></div>
+              <div class="fvr-flag"><span class="ar">لا يطلب OTP عبر الهاتف أو المواقع الخارجية</span><span class="en">Never requests OTP via phone or external websites</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="full-divider"></div>
+  <section id="protect-section">
+    <div class="section-label ar">الحماية</div><div class="section-label en">Protection</div>
+    <h2 class="section-title"><span class="ar">كيف <em>تحمي نفسك</em>؟</span><span class="en">How to <em>protect yourself</em>?</span></h2>
+    <div class="protect-grid">
+      <div class="protect-item"><div class="pi-icon">🔐</div><div class="pi-content"><h4><span class="ar">فعّل المصادقة الثنائية (MFA)</span><span class="en">Enable MFA</span></h4><p><span class="ar">حتى لو سرق المهاجم كلمة مرورك لن يستطيع الدخول بدون رمز التحقق الثاني.</span><span class="en">Even if an attacker steals your password they can't get in without your second verification factor.</span></p></div></div>
+      <div class="protect-item"><div class="pi-icon">🔗</div><div class="pi-content"><h4><span class="ar">تحقق من الرابط قبل الضغط</span><span class="en">Check Links Before Clicking</span></h4><p><span class="ar">مرر الماوس فوق الرابط لرؤية العنوان الحقيقي. ابحث عن اختلافات صغيرة في النطاق.</span><span class="en">Hover over links to see the real address. Look for subtle differences in the domain name.</span></p></div></div>
+      <div class="protect-item"><div class="pi-icon">🙅</div><div class="pi-content"><h4><span class="ar">لا تشارك OTP أبداً</span><span class="en">Never Share Your OTP</span></h4><p><span class="ar">لا يوجد بنك أو جهة حكومية تطلب رمز OTP عبر الهاتف. من يطلبه هو مهاجم.</span><span class="en">No bank or government agency will ever ask for your OTP by phone. Anyone who does is an attacker.</span></p></div></div>
+      <div class="protect-item"><div class="pi-icon">⏸️</div><div class="pi-content"><h4><span class="ar">توقف واتصل بالجهة مباشرة</span><span class="en">Stop and Call Directly</span></h4><p><span class="ar">عند أي رسالة مريبة لا ترد ولا تضغط. اتصل بالجهة عبر رقمها الرسمي فقط.</span><span class="en">For any suspicious message don't reply or click. Call the institution using their official number only.</span></p></div></div>
+      <div class="protect-item"><div class="pi-icon">🚨</div><div class="pi-content"><h4><span class="ar">بلّغ عن المحاولات</span><span class="en">Report Attempts</span></h4><p><span class="ar">أبلغ الهيئة الوطنية للأمن السيبراني على nca.gov.sa أو اتصل على 1991.</span><span class="en">Report to the National Cybersecurity Authority at nca.gov.sa or call 1991.</span></p></div></div>
+      <div class="protect-item"><div class="pi-icon">🧠</div><div class="pi-content"><h4><span class="ar">الشك سلاحك الأقوى</span><span class="en">Doubt is Your Strongest Weapon</span></h4><p><span class="ar">أي رسالة تشعرك بالإلحاح أو الخوف — توقف. هذا الشعور ما يصممه المهاجم.</span><span class="en">Any message that makes you feel urgency or fear — pause. That feeling is exactly what the attacker designed.</span></p></div></div>
+    </div>
+  </section>
+  <div class="quiz-cta-section" style="margin:3rem auto;width:calc(100% - 3rem);max-width:1100px;">
+    <div class="section-label" style="justify-content:center;"><span class="ar">اختبر معلوماتك</span><span class="en">Test Your Knowledge</span></div>
+    <h2><span class="ar">هل أنت مستعد لاختبار نفسك؟</span><span class="en">Ready to test yourself?</span></h2>
+    <p><span class="ar">7 سيناريوهات واقعية مختلفة في كل جلسة. هل تستطيع اكتشاف الاحتيال؟</span><span class="en">7 unique real-world scenarios every session. Can you spot the fraud?</span></p>
+    <div class="quiz-features">
+      <span class="qf-item"><span class="ar">أسئلة عشوائية في كل مرة</span><span class="en">Random questions every time</span></span>
+      <span class="qf-item"><span class="ar">سيناريوهات سعودية واقعية</span><span class="en">Real Saudi scenarios</span></span>
+      <span class="qf-item"><span class="ar">مراجعة فورية للإجابات</span><span class="en">Instant answer review</span></span>
+    </div>
+    <button class="btn-primary" onclick="startQuiz()" style="font-size:1.05rem;padding:.95rem 2.4rem;">🎯 <span class="ar">ابدأ الاختبار الآن</span><span class="en">Start the Quiz Now</span></button>
+  </div>
+  <footer><p><span class="ar">حملة توعوية أمنية · <span>لا تنخدع</span></span><span class="en">Security Awareness Campaign · <span>Don't Be Fooled</span></span></p></footer>
+</div>
+<div id="quiz-page" class="page">
+  <div class="quiz-page-wrapper">
+    <div class="quiz-top-bar">
+      <div class="qtb-left">
+        <span class="q-counter" id="q-counter">QUESTION 1 / 7</span>
+        <span class="q-title ar">هل تستطيع اكتشاف الاحتيال؟</span>
+        <span class="q-title en" style="display:none;">Can you spot the phish?</span>
+      </div>
+      <div class="score-live">⚡ <span id="live-score">0</span> / <span id="live-total">0</span></div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="q-progress" style="width:14.28%"></div></div>
+    <div id="quiz-content"></div>
+    <div class="quiz-nav"><button class="btn-next" id="btn-next" onclick="nextQuestion()"><span class="ar">التالي →</span><span class="en">Next →</span></button></div>
+  </div>
+</div>
+<div id="results-page" class="page">
+  <div class="results-wrapper">
+    <div class="results-hero">
+      <div class="results-circle">
+        <span class="rc-score" id="final-score-num">0</span>
+        <span class="rc-total" id="rc-total">/ 7</span>
+      </div>
+      <h2 id="result-title">—</h2>
+      <p class="rh-msg" id="result-msg">—</p>
+    </div>
+    <div class="results-metrics" id="results-metrics"></div>
+    <div class="share-bar">
+      <div class="sb-text">
+        <strong><span class="ar">شارك الاختبار مع أصدقائك وعائلتك</span><span class="en">Share the quiz with friends & family</span></strong>
+        <span class="ar">وعيك قد ينقذهم من الوقوع في فخ التصيد</span>
+        <span class="en">Your awareness could save them from phishing</span>
+      </div>
+      <div class="share-btns">
+        <button class="share-btn" onclick="copyLink(event)"><span class="ar">📋 نسخ الرابط</span><span class="en">📋 Copy Link</span></button>
+        <button class="share-btn" onclick="shareWhatsApp()">💬 WhatsApp</button>
+        <button class="share-btn" onclick="shareTwitter()">🐦 X / Twitter</button>
+      </div>
+    </div>
+    <div class="participants-box">
+      <div class="pb-num" id="participants-num" style="font-size:1.5rem;color:var(--text-muted);">...</div>
+      <div class="pb-label ar">شخص أجرى هذا الاختبار</div>
+      <div class="pb-label en" style="display:none;">people have taken this quiz</div>
+      <div class="pb-sub" id="rank-text"></div>
+    </div>
+    <div class="score-tips"><h3>💡 <span class="ar">نصائح مخصصة لك</span><span class="en">Your Personalized Tips</span></h3><div class="tips-list" id="tips-list"></div></div>
+    <div class="review-section"><h3>📋 <span class="ar">مراجعة إجاباتك</span><span class="en">Your Answers Review</span></h3><div class="review-list" id="review-list"></div></div>
+    <div class="results-actions">
+      <button class="btn-primary" onclick="startQuiz()">🔄 <span class="ar">أعد الاختبار</span><span class="en">Retake Quiz</span></button>
+      <button class="btn-secondary" onclick="showPage('home')"><span class="ar">← الرئيسية</span><span class="en">← Home</span></button>
+    </div>
+  </div>
+  <footer><p><span class="ar">حملة توعوية أمنية · <span>لا تنخدع</span></span><span class="en">Security Awareness Campaign · <span>Don't Be Fooled</span></span></p></footer>
+</div>
+<script>
+let isAr=true;
+function toggleLang(){
+  isAr=!isAr;
+  const html=document.documentElement,btn=document.getElementById('lang-btn');
+  if(isAr){html.setAttribute('dir','rtl');html.setAttribute('lang','ar');btn.textContent='EN';document.querySelectorAll('.ar').forEach(e=>e.style.display='');document.querySelectorAll('.en').forEach(e=>e.style.display='none');}
+  else{html.setAttribute('dir','ltr');html.setAttribute('lang','en');btn.textContent='ع';document.querySelectorAll('.ar').forEach(e=>e.style.display='none');document.querySelectorAll('.en').forEach(e=>e.style.display='');}
+}
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id+'-page').classList.add('active');window.scrollTo(0,0);}
+function navScroll(id){
+  if(!document.getElementById('home-page').classList.contains('active')){showPage('home');setTimeout(()=>{const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},120);}
+  else{const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
+}
+const SKEY='dbf_participants_v3';
+async function getCount(){try{const r=await window.storage.get(SKEY,true);return r?parseInt(r.value)||0:0;}catch(e){return parseInt(localStorage.getItem(SKEY)||'0');}}
+async function incCount(){try{const c=await getCount(),n=c+1;await window.storage.set(SKEY,String(n),true);return n;}catch(e){const n=parseInt(localStorage.getItem(SKEY)||'0')+1;localStorage.setItem(SKEY,String(n));return n;}}
+async function loadHomeCounter(){const n=await getCount();const el=document.getElementById('home-counter');if(el)el.textContent=n.toLocaleString();}
+loadHomeCounter();
+const ALL_Q=[
+  {ta:'📱 SMS · Smishing',te:'📱 SMS · Smishing',qa:'وصلتك هذه الرسالة النصية. ماذا تفعل؟',qe:"You receive this SMS. What do you do?",fa:'SADAD · سداد',fe:'SADAD',ba:'⚠️ تنبيه عاجل: حسابك سيتم تعليقه خلال ساعتين.\nhttp://sadad-verify-ksa.net/secure',be:'⚠️ URGENT: Your account will be suspended in 2 hours.\nhttp://sadad-verify-ksa.net/secure',oa:['أضغط الرابط فوراً','أتجاهلها وأبلغ عنها كرسالة مزيفة','أرد وأطلب مزيداً من المعلومات','أتصل برقم ظهر في الرسالة'],oe:['Click the link immediately','Ignore it and report it as fake','Reply asking for more information','Call a number from the message'],c:1,xa:'✅ الإجابة الصحيحة: التجاهل والإبلاغ. النطاق sadad-verify-ksa.net ليس النطاق الرسمي لـ SADAD. لغة الإلحاح أسلوب تلاعب كلاسيكي.',xe:"✅ Correct: Ignore and report. The domain sadad-verify-ksa.net is not SADAD's official domain. Urgency language is a classic manipulation tactic."},
+  {ta:'📧 Email · Spoofing',te:'📧 Email · Spoofing',qa:'وصلتك هذه الرسالة الإلكترونية. هل هي حقيقية؟',qe:'You receive this email. Is it legitimate?',fa:'security@alrajhi-bank.verify-now.com',fe:'security@alrajhi-bank.verify-now.com',ba:'عزيزي العميل، تم رصد نشاط مشبوه على حسابك. سجّل الدخول فوراً عبر:\nhttps://alrajhi-bank.verify-now.com/login',be:"Dear Customer, suspicious activity was detected. Login immediately at:\nhttps://alrajhi-bank.verify-now.com/login",oa:['حقيقية — البريد يحتوي اسم الراجحي','احتيالية — النطاق verify-now.com مزيف','حقيقية — الرابط يبدأ بـ HTTPS','لست متأكداً — سأرد وأسأل'],oe:["Legitimate — the email has Al Rajhi's name","Phishing — the domain verify-now.com is fake","Legitimate — the link starts with HTTPS","Not sure — I'll reply and ask"],c:1,xa:"✅ الإجابة الصحيحة: احتيالية. النطاق الحقيقي للراجحي هو alrajhibank.com.sa — verify-now.com هو نطاق المهاجم. HTTPS لا تعني أن الموقع شرعي.",xe:"✅ Correct: Phishing. Al Rajhi's real domain is alrajhibank.com.sa — verify-now.com belongs to the attacker. HTTPS doesn't mean the site is legitimate."},
+  {ta:'📞 Phone · Vishing',te:'📞 Phone · Vishing',qa:'اتصل بك شخص يدّعي أنه من أمان البنك ويطلب رمز OTP. ماذا تفعل؟',qe:'Someone calls claiming to be from bank security and asks for your OTP. What do you do?',fa:'مكالمة واردة — رقم مجهول',fe:'Incoming call — Unknown number',ba:'مرحباً، أنا من فريق الحماية. لاحظنا محاولة اختراق لحسابك. أعطني رمز OTP لإيقاف السرقة فوراً.',be:"Hello, I'm from the security team. We noticed an intrusion attempt. Give me your OTP to stop the theft immediately.",oa:['أعطيه الرمز — الأمر عاجل','أغلق الخط وأتصل بالبنك على رقمه الرسمي','أعطيه الأرقام الأولى فقط','أسأله عن رقم موظفه أولاً'],oe:["Give the OTP — it's urgent","Hang up and call the bank's official number","Give only the first few digits","Ask for his employee number first"],c:1,xa:'✅ الإجابة الصحيحة: أغلق الخط. لا يوجد بنك في العالم يتصل بك ويطلب رمز OTP. رمز OTP موجود تحديداً لمنع الآخرين من الوصول.',xe:"✅ Correct: Hang up. No bank in the world calls you and asks for your OTP. The OTP exists specifically to prevent others from accessing your account."},
+  {ta:'💬 WhatsApp · Baiting',te:'💬 WhatsApp · Baiting',qa:'وصلتك هذه الرسالة على WhatsApp من رقم مجهول. ما هي؟',qe:'You receive this WhatsApp message from an unknown number. What is it?',fa:'+966 5XX XXX XXX',fe:'+966 5XX XXX XXX',ba:'🎉 مبروك! فزت بجائزة iPhone 16 Pro من مسابقة STC! اضغط الرابط خلال 24 ساعة:\nhttp://stc-prize-2026.win/claim',be:'🎉 Congratulations! You won an iPhone 16 Pro from STC! Click within 24 hours:\nhttp://stc-prize-2026.win/claim',oa:['جائزة حقيقية — اضغط الرابط','هجوم إيقاع — تجاهل وحظر الرقم','أرسلها لأصدقائي ليستفيدوا','اتصل بـ STC للتأكد'],oe:['Real prize — click the link','Baiting attack — ignore and block','Forward to friends so they benefit','Call STC to confirm'],c:1,xa:"✅ الإجابة الصحيحة: هجوم إيقاع. لم تشترك في أي مسابقة. '24 ساعة' هو ضغط مصطنع. النطاق stc-prize-2026.win ليس له علاقة بـ STC.",xe:"✅ Correct: Baiting attack. You never entered any contest. '24 hours' is artificial pressure. The domain stc-prize-2026.win has nothing to do with STC."},
+  {ta:'🔒 HTTPS · TLS Abuse',te:'🔒 HTTPS · TLS Abuse',qa:'وصلك رابط لموقع بنكي والمتصفح يظهر قفل 🔒 وHTTPS. هل الموقع آمن؟',qe:'You receive a banking link and the browser shows 🔒 HTTPS. Is it safe?',fa:'شريط العنوان في المتصفح',fe:'Browser address bar',ba:'🔒 https://www.alrajhi-bank-secure.com/login\nالموقع يبدو طبق الأصل من الموقع الرسمي.',be:'🔒 https://www.alrajhi-bank-secure.com/login\nThe page looks identical to the real Al Rajhi website.',oa:['آمن تماماً — القفل وHTTPS ضمان','قد يكون احتيالاً — تحقق من النطاق بدقة','آمن — التصميم مطابق للأصلي','آمن — HTTPS لا تعمل إلا مع الحقيقي'],oe:['Completely safe — padlock and HTTPS guarantee safety','Possibly phishing — carefully check the exact domain','Safe — the design matches the original','Safe — HTTPS only works with real sites'],c:1,xa:'✅ الإجابة الصحيحة: تحقق من النطاق. HTTPS تعني فقط أن الاتصال مشفر. المهاجمون يحصلون على شهادات TLS مجانية. النطاق الحقيقي للراجحي هو alrajhibank.com.sa.',xe:"✅ Correct: Check the domain. HTTPS only means the connection is encrypted. Attackers freely obtain TLS certificates. Al Rajhi's real domain is alrajhibank.com.sa."},
+  {ta:'🏦 Banking · Pretexting',te:'🏦 Banking · Pretexting',qa:'استيقظت على هذه الرسالة في الصباح. ماذا تفعل؟',qe:'You wake up to this message. What do you do?',fa:'noreply@bank-alert-ksa.net',fe:'noreply@bank-alert-ksa.net',ba:'تم خصم 2,850 ريال من حسابك. إذا لم تجرِ هذه العملية اضغط لإلغائها:\nhttp://bky-secure.com/cancel-tx?id=8847',be:"2,850 SAR was deducted from your account. If you didn't do this, click to cancel:\nhttp://bky-secure.com/cancel-tx?id=8847",oa:['أضغط الرابط فوراً لإلغاء العملية','أفتح تطبيق البنك الرسمي وأتحقق','أرسل الرابط لأحد الأسرة للمساعدة','أرد على البريد بكلمة إلغاء'],oe:['Click the link immediately to cancel','Open the official bank app and check directly','Send the link to a family member for help','Reply to the email with the word Cancel'],c:1,xa:'✅ الإجابة الصحيحة: افتح التطبيق الرسمي. الرسالة تستخدم الخوف من خسارة المال. دائماً تحقق عبر التطبيق الرسمي مباشرة.',xe:"✅ Correct: Open the official app. The message exploits fear of financial loss. Always verify through the official app directly."},
+  {ta:'📸 Instagram · Fake Prize',te:'📸 Instagram · Fake Prize',qa:'شاهدت هذا المنشور على Instagram. هل هو حقيقي؟',qe:'You see this post on Instagram. Is it real?',fa:'@stc_ksa_official2026 — 43 متابع',fe:'@stc_ksa_official2026 — 43 followers',ba:'🎊 احتفالاً بيوبيلنا نهدي 500 مشترك جهاز Samsung Galaxy S25! تابع الحساب وأرسل رقمك الوطني في الخاص.',be:'🎊 To celebrate our jubilee we are gifting 500 subscribers a Samsung Galaxy S25! Follow and send your national ID in DM.',oa:['حقيقي — STC شركة معروفة وأثق بها','احتيال — لا شركة تطلب رقمك الوطني عبر DM','سأشارك رقم هاتفي فقط','سأتابع فقط دون إرسال بياناتي'],oe:['Real — STC is a known company I trust','Scam — no company requests national ID via DM','I will share only my phone number','I will just follow without sending any data'],c:1,xa:'✅ الإجابة الصحيحة: احتيال. الحساب جديد وعدد متابعيه ضئيل. STC الرسمية لها حسابات موثقة بعلامة ✓ زرقاء. لا شركة شرعية تطلب رقمك الوطني عبر رسائل خاصة.',xe:'✅ Correct: Scam. The account is new with few followers. Official STC has blue-verified accounts. No legitimate company ever requests your national ID via DM.'},
+  {ta:'💼 Work · CEO Fraud',te:'💼 Work · CEO Fraud',qa:'وصلتك هذه الرسالة على بريد العمل من "مديرك". ماذا تفعل؟',qe:'You receive this work email from "your manager". What do you do?',fa:'ahmed.manager@company-corp.net',fe:'ahmed.manager@company-corp.net',ba:'أنا في اجتماع عاجل ولا أستطيع الرد على المكالمات. أحتاج تحويل 15,000 ريال فوراً. لا تخبر أحداً الآن.',be:"I'm in an urgent meeting. I need you to transfer 15,000 SAR immediately. Don't tell anyone now.",oa:['أحوّل المبلغ فوراً — المدير طلب','أتصل بالمدير مباشرة للتأكد قبل أي إجراء','أرسل نصف المبلغ أولاً','أرسل المبلغ وأخبر المالية لاحقاً'],oe:['Transfer immediately — the manager asked','Call the manager directly to verify first','Send half the amount first to verify','Send then inform finance later'],c:1,xa:"✅ الإجابة الصحيحة: اتصل بالمدير. هذا احتيال CEO. 'لا تخبر أحداً' علامة تحذير واضحة. أي طلب مالي عاجل عبر البريد يتطلب تأكيداً هاتفياً.",xe:"✅ Correct: Call the manager. This is CEO Fraud. 'Don't tell anyone' is a clear red flag. Any urgent financial request via email alone requires phone verification."},
+  {ta:'🔑 University · Harvesting',te:'🔑 University · Harvesting',qa:'وصلتك رسالة تطلب تأكيد بيانات حسابك الجامعي. ماذا تفعل؟',qe:'You receive an email to confirm your university account. What do you do?',fa:'noreply@kau-portal.edu-verify.com',fe:'noreply@kau-portal.edu-verify.com',ba:'عزيزي الطالب، انتهت صلاحية حسابك الجامعي. سجّل دخولك هنا قبل الغد:\nhttp://kau-portal.edu-verify.com/renew',be:"Dear Student, your university account expired. Login here before tomorrow:\nhttp://kau-portal.edu-verify.com/renew",oa:['أسجل دخولي فوراً — لا أريد حذف بياناتي','أدخل على البوابة الرسمية للجامعة وأتحقق','أرسل اسم المستخدم فقط دون كلمة المرور','أسأل أصدقائي إن تلقوا نفس الرسالة'],oe:["Login immediately — I don't want data deleted","Go to the university's official portal and check","Send only the username without the password","Ask friends if they received the same message"],c:1,xa:"✅ الإجابة الصحيحة: ادخل على البوابة الرسمية. النطاق edu-verify.com ليس نطاق جامعة الملك عبدالعزيز الرسمي kau.edu.sa.",xe:"✅ Correct: Go to the official portal. The domain edu-verify.com is not KAU's official domain kau.edu.sa."},
+  {ta:'🛡️ Final Challenge',te:'🛡️ Final Challenge',qa:'أيٌّ من هذه العلامات يُشير بوضوح إلى أن الرسالة احتيالية؟',qe:'Which sign clearly indicates that a message is fraudulent?',fa:'سؤال تقييمي نهائي',fe:'Final Assessment Question',ba:'بعد كل ما تعلمته، حدد العلامة الأكثر دلالة على محاولة الاحتيال.',be:"After everything you've learned, identify the most telling sign of a phishing attempt.",oa:['الرسالة مكتوبة بالعربية الفصحى','تطلب التصرف بشكل عاجل جداً وتهددك','الرسالة وصلت في وقت متأخر من الليل','الرسالة من رقم لم تتعامل معه سابقاً'],oe:['The message is written in formal Arabic','It demands urgent action and threatens you','The message arrived late at night',"The message is from a number you haven't interacted with"],c:1,xa:'✅ الإجابة الصحيحة: الإلحاح والتهديد. الإحساس الاصطناعي بالإلحاح هو أكثر علامات التصيد موثوقية. المهاجمون يصممونه عن قصد لإيقاف تفكيرك.',xe:"✅ Correct: Urgency and threats. The artificial sense of urgency is the most reliable phishing indicator. Attackers deliberately design it to stop your critical thinking."}
+];
+const QSIZE=7;
+let curQ=0,score=0,done=false,sessQ=[],sessM=[],sessA=[];
+function shuf(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+function fmtBody(txt){
+  return txt.split('\n').map((line,i)=>{
+    const isLinkish=/https?:\/\/\S+|^\S+@\S+\.\S+$|^\+?\d[\d\s\-]{6,}$/.test(line.trim());
+    if(i===0) return '<span>'+line+'</span>';
+    if(isLinkish) return '<span class="sc-block">'+line+'</span>';
+    return '<br><span>'+line+'</span>';
+  }).join('');
+}
+function startQuiz(){
+  curQ=0;score=0;done=false;sessA=[];
+  sessQ=shuf(ALL_Q).slice(0,QSIZE);
+  sessM=sessQ.map(q=>{const idx=shuf([0,1,2,3]);return{idx,nc:idx.indexOf(q.c)};});
+  showPage('quiz');renderQ();
+}
+function renderQ(){
+  const q=sessQ[curQ],m=sessM[curQ],tot=sessQ.length;
+  document.getElementById('q-counter').textContent='QUESTION '+(curQ+1)+' / '+tot;
+  document.getElementById('q-progress').style.width=((curQ+1)/tot*100)+'%';
+  document.getElementById('live-score').textContent=score;
+  document.getElementById('live-total').textContent=curQ;
+  document.getElementById('btn-next').classList.remove('show');
+  done=false;
+  const from=isAr?(q.fa||''):(q.fe||'');
+  const body=fmtBody(isAr?q.ba:q.be);
+  const rawOpts=isAr?q.oa:q.oe;
+  const opts=m.idx.map(i=>rawOpts[i]);
+  const lets=isAr?['أ','ب','ج','د']:['A','B','C','D'];
+  document.getElementById('quiz-content').innerHTML=`
+    <div class="question-panel">
+      <div class="qp-type">${isAr?q.ta:q.te}</div>
+      <div class="qp-body">
+        <p class="qp-question">${isAr?q.qa:q.qe}</p>
+        <div class="qp-scenario"><span class="sc-from">${from}</span>${body}</div>
+        <div class="options-list">${opts.map((o,i)=>`<button class="opt-btn" id="opt-${i}" onclick="selAns(${i})"><span class="opt-letter">${lets[i]}</span>${o}</button>`).join('')}</div>
+        <div class="feedback-panel" id="fb"></div>
+      </div>
+    </div>`;
+}
+function selAns(ch){
+  if(done)return;done=true;
+  const q=sessQ[curQ],m=sessM[curQ],cor=m.nc,ok=ch===cor;
+  if(ok)score++;
+  sessA.push({q,m,ch,cor,ok});
+  document.getElementById('live-score').textContent=score;
+  document.getElementById('live-total').textContent=curQ+1;
+  document.querySelectorAll('.opt-btn').forEach((b,i)=>{
+    b.disabled=true;
+    if(i===cor)b.classList.add('correct');
+    else if(i===ch&&!ok)b.classList.add('wrong');
+  });
+  const fb=document.getElementById('fb');
+  fb.textContent=isAr?q.xa:q.xe;
+  fb.className='feedback-panel show '+(ok?'correct':'wrong');
+  const nb=document.getElementById('btn-next');nb.classList.add('show');
+  const last=curQ>=sessQ.length-1;
+  nb.innerHTML=last?`<span class="ar">عرض النتائج 🏆</span><span class="en" ${isAr?'style="display:none"':''}>See Results 🏆</span>`:`<span class="ar">التالي →</span><span class="en" ${isAr?'style="display:none"':''}>Next →</span>`;
+}
+function nextQuestion(){curQ++;if(curQ>=sessQ.length)showResults();else renderQ();}
+async function showResults(){
+  const tot=sessQ.length;
+  showPage('results');
+  document.getElementById('final-score-num').textContent=score;
+  document.getElementById('rc-total').textContent='/ '+tot;
+  const pct=Math.round(score/tot*100),wrong=tot-score;
+  const R=[
+    {ar:'تحتاج إلى مزيد من التعلم 📚',en:'Keep Learning 📚',mar:'التصيد مصمم ليخدع الجميع. لا تيأس — القراءة والتدرب يجعلانك محصناً.',men:"Phishing is designed to trick everyone. Don't give up — reading and practice build resilience."},
+    {ar:'تحتاج إلى مزيد من التعلم 📚',en:'Keep Learning 📚',mar:'التصيد مصمم ليخدع الجميع. لا تيأس — القراءة والتدرب يجعلانك محصناً.',men:"Phishing is designed to trick everyone. Don't give up — reading and practice build resilience."},
+    {ar:'أنت في بداية الطريق 🌱',en:"You're Getting Started 🌱",mar:'بدأت تبني وعيك الأمني. راجع الإجابات التي أخطأت فيها وستتحسن بسرعة.',men:"You're building security awareness. Review the answers you missed and you'll improve quickly."},
+    {ar:'وعيك في ازدياد 📈',en:'Your Awareness is Growing 📈',mar:'وعيك في ازدياد! تعلّم المزيد عن الأساليب التي فاتتك.',men:"Your awareness is growing! Learn more about the techniques you missed."},
+    {ar:'حماية جيدة لنفسك ✅',en:'You Protect Yourself Well ✅',mar:'أنت تحمي نفسك جيداً. شارك هذا الاختبار مع عائلتك.',men:'You protect yourself well. Share this quiz with your family and friends.'},
+    {ar:'وعي استثنائي 🛡️',en:'Exceptional Awareness 🛡️',mar:'وعي استثنائي! أنت قادر على حماية نفسك وتوعية من حولك.',men:'Exceptional awareness! You can protect yourself and educate those around you.'},
+    {ar:'وعي استثنائي 🛡️',en:'Exceptional Awareness 🛡️',mar:'وعي استثنائي! أنت قادر على حماية نفسك وتوعية من حولك.',men:'Exceptional awareness! You can protect yourself and educate those around you.'},
+    {ar:'نتيجة مثالية! أنت المحقق 🔥',en:"Perfect Score! You're the Detective 🔥",mar:'أحسنت! اكتشفت كل محاولات الاحتيال. أنت نموذج يُحتذى به.',men:'Outstanding! You spotted every phishing attempt. You are a cybersecurity role model.'}
+  ];
+  const d=R[Math.min(score,R.length-1)];
+  document.getElementById('result-title').textContent=isAr?d.ar:d.en;
+  document.getElementById('result-msg').textContent=isAr?d.mar:d.men;
+  document.getElementById('results-metrics').innerHTML=`
+    <div class="rm-card good"><div class="rm-val">${score}</div><div class="rm-label">${isAr?'إجابات صحيحة':'Correct'}</div></div>
+    <div class="rm-card bad"><div class="rm-val">${wrong}</div><div class="rm-label">${isAr?'إجابات خاطئة':'Wrong'}</div></div>
+    <div class="rm-card neutral"><div class="rm-val">${pct}%</div><div class="rm-label">${isAr?'نسبة الدقة':'Accuracy'}</div></div>`;
+  try{
+    const n=await incCount();
+    const pEl=document.getElementById('participants-num');
+    pEl.style.fontSize='';pEl.style.color='';
+    pEl.textContent=n.toLocaleString();
+    const rp=Math.max(0,Math.round((1-score/tot)*100));
+    document.getElementById('rank-text').textContent=isAr?`🏅 نتيجتك تضعك في أفضل ${100-rp}% من المشاركين`:`🏅 Your score places you in the top ${100-rp}% of participants`;
+    loadHomeCounter();
+  }catch(e){
+    document.getElementById('participants-num').textContent='—';
+  }
+  renderTips(score,tot);renderReview();
+}
+function renderTips(s,t){
+  const tips=[
+    {i:'🔍',at:'تحقق دائماً من النطاق',et:'Always Check the Domain',ad:'قبل إدخال أي بيانات تأكد أن النطاق هو النطاق الرسمي بالضبط.',ed:'Before entering any data make sure the domain is exactly the official one.'},
+    {i:'⏸️',at:'توقف عند الإلحاح',et:'Pause on Urgency',ad:'أي رسالة تشعرك بضرورة التصرف فوراً هي على الأرجح احتيال.',ed:'Any message that makes you feel you must act immediately is likely a scam.'},
+    {i:'🔐',at:'فعّل المصادقة الثنائية',et:'Enable Two-Factor Authentication',ad:'MFA تحمي حسابك حتى لو سرق أحدهم كلمة مرورك.',ed:'MFA protects your account even if someone steals your password.'},
+    {i:'🙅',at:'لا تشارك OTP مع أحد',et:'Never Share Your OTP',ad:'حتى لو ادّعى المتصل أنه من بنكك — لا أحد يحق له طلب رمز OTP.',ed:"Even if the caller claims to be from your bank — no one has the right to ask for your OTP."},
+    {i:'📱',at:'استخدم التطبيقات الرسمية',et:'Use Official Apps',ad:'للتحقق من أي معاملة افتح التطبيق الرسمي مباشرة دون الاعتماد على روابط.',ed:'To verify any transaction open the official app directly without relying on links.'},
+    {i:'🚨',at:'بلّغ عن المحاولات',et:'Report Attempts',ad:'أبلغ عن رسائل التصيد لـ NCA على nca.gov.sa أو اتصل 1991.',ed:'Report phishing messages to NCA at nca.gov.sa or call 1991.'},
+  ];
+  const cnt=s/t<=0.43?6:s/t<=0.71?4:s/t<=0.86?3:2;
+  document.getElementById('tips-list').innerHTML=tips.slice(0,cnt).map(tp=>`<div class="tip-row"><span class="tip-icon">${tp.i}</span><p><strong>${isAr?tp.at:tp.et}</strong>${isAr?tp.ad:tp.ed}</p></div>`).join('');
+}
+function renderReview(){
+  document.getElementById('review-list').innerHTML=sessA.map((a,i)=>{
+    const q=a.q,raw=isAr?q.oa:q.oe,sOpts=a.m.idx.map(j=>raw[j]);
+    const cTxt=sOpts[a.cor],aTxt=sOpts[a.ch]||'—';
+    return `<div class="review-item ${a.ok?'rev-correct':'rev-wrong'}">
+      <span class="rev-badge ${a.ok?'correct':'wrong'}">${a.ok?(isAr?'✓ صحيح':'✓ Correct'):(isAr?'✗ خاطئ':'✗ Wrong')}</span>
+      <div class="rev-q">${i+1}. ${isAr?q.qa:q.qe}</div>
+      <div class="rev-a">${isAr?'إجابتك:':'Your answer:'} ${aTxt}</div>
+      ${!a.ok?`<div class="rev-a" style="color:var(--green-light);">${isAr?'الصحيحة:':'Correct:'} ${cTxt}</div>`:''}
+    </div>`;
+  }).join('');
+}
+function copyLink(e){
+  const url=window.location.href;
+  navigator.clipboard.writeText(url).then(()=>{
+    const b=e.target.closest('button');b.classList.add('copied');
+    b.innerHTML=isAr?'✓ تم النسخ':'✓ Copied!';
+    setTimeout(()=>{b.classList.remove('copied');b.innerHTML=isAr?'📋 نسخ الرابط':'📋 Copy Link';},2000);
+  }).catch(()=>window.prompt('Copy:',url));
+}
+function shareWhatsApp(){const t=isAr?`لا تنخدع 🛡️ — اختبر معرفتك بالتصيد الاحتيالي: ${location.href}`:`Don't Be Fooled 🛡️ — Test your phishing awareness: ${location.href}`;window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank');}
+function shareTwitter(){const t=isAr?`اختبرت معرفتي بالتصيد على موقع "لا تنخدع" 🛡️ جرب أنت أيضاً:`:`I tested my phishing awareness on "Don't Be Fooled" 🛡️ Try it yourself:`;window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(t)+'&url='+encodeURIComponent(location.href),'_blank');}
+</script>
+</body>
+</html>
