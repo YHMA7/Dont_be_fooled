@@ -519,16 +519,16 @@ function navScroll(id){
   if(!document.getElementById('home-page').classList.contains('active')){showPage('home');setTimeout(()=>{const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},120);}
   else{const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 }
-// ── SHARED COUNTER via CountAPI (free, no signup, truly global) ──
-const COUNT_URL='https://api.countapi.xyz/hit/dont-be-fooled-dbf2026/visits';
-const COUNT_GET='https://api.countapi.xyz/get/dont-be-fooled-dbf2026/visits';
+// ── SHARED COUNTER via Cloudflare Worker (free, truly global) ──
+// Uses a free public KV counter — replace WORKER_URL with your own if needed
+const WORKER_URL = 'https://dbf-counter.yazanalyami83.workers.dev';
 
 async function getCount(){
   try{
-    const r=await fetch(COUNT_GET);
+    const r = await fetch(WORKER_URL + '/get', {cache:'no-store'});
     if(!r.ok) throw new Error();
-    const d=await r.json();
-    return d.value||0;
+    const d = await r.json();
+    return d.count || 0;
   }catch(e){
     return parseInt(localStorage.getItem('dbf_count')||'0');
   }
@@ -536,22 +536,22 @@ async function getCount(){
 
 async function incCount(){
   try{
-    const r=await fetch(COUNT_URL);
+    const r = await fetch(WORKER_URL + '/inc', {method:'POST', cache:'no-store'});
     if(!r.ok) throw new Error();
-    const d=await r.json();
-    localStorage.setItem('dbf_count', String(d.value));
-    return d.value||1;
+    const d = await r.json();
+    localStorage.setItem('dbf_count', String(d.count));
+    return d.count || 1;
   }catch(e){
-    const n=parseInt(localStorage.getItem('dbf_count')||'0')+1;
-    localStorage.setItem('dbf_count',String(n));
+    const n = parseInt(localStorage.getItem('dbf_count')||'0') + 1;
+    localStorage.setItem('dbf_count', String(n));
     return n;
   }
 }
 
 async function loadHomeCounter(){
-  const n=await getCount();
-  const el=document.getElementById('home-counter');
-  if(el) el.textContent=n.toLocaleString();
+  const n = await getCount();
+  const el = document.getElementById('home-counter');
+  if(el) el.textContent = n.toLocaleString();
 }
 loadHomeCounter();
 const ALL_Q=[
