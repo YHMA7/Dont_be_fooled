@@ -457,13 +457,13 @@ html[dir="rtl"] .fvr-col.real{border-left:none;border-right:1px solid var(--bord
   <div class="quiz-page-wrapper">
     <div class="quiz-top-bar">
       <div class="qtb-left">
-        <span class="q-counter" id="q-counter">QUESTION 1 / 7</span>
+        <span class="q-counter" id="q-counter">QUESTION 1 / 10</span>
         <span class="q-title ar">هل تستطيع اكتشاف الاحتيال؟</span>
         <span class="q-title en" style="display:none;">Can you spot the phish?</span>
       </div>
       <div class="score-live">⚡ <span id="live-score">0</span> / <span id="live-total">0</span></div>
     </div>
-    <div class="progress-track"><div class="progress-fill" id="q-progress" style="width:14.28%"></div></div>
+    <div class="progress-track"><div class="progress-fill" id="q-progress" style="width:10%"></div></div>
     <div id="quiz-content"></div>
     <div class="quiz-nav"><button class="btn-next" id="btn-next" onclick="nextQuestion()"><span class="ar">التالي →</span><span class="en">Next →</span></button></div>
   </div>
@@ -519,24 +519,265 @@ function navScroll(id){
   if(!document.getElementById('home-page').classList.contains('active')){showPage('home');setTimeout(()=>{const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},120);}
   else{const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 }
-const SKEY='dbf_participants_v3';
-async function getCount(){try{const r=await window.storage.get(SKEY,true);return r?parseInt(r.value)||0:0;}catch(e){return parseInt(localStorage.getItem(SKEY)||'0');}}
-async function incCount(){try{const c=await getCount(),n=c+1;await window.storage.set(SKEY,String(n),true);return n;}catch(e){const n=parseInt(localStorage.getItem(SKEY)||'0')+1;localStorage.setItem(SKEY,String(n));return n;}}
-async function loadHomeCounter(){const n=await getCount();const el=document.getElementById('home-counter');if(el)el.textContent=n.toLocaleString();}
+// ── SHARED COUNTER via CountAPI (free, no signup, truly global) ──
+const COUNT_URL='https://api.countapi.xyz/hit/dont-be-fooled-dbf2026/visits';
+const COUNT_GET='https://api.countapi.xyz/get/dont-be-fooled-dbf2026/visits';
+
+async function getCount(){
+  try{
+    const r=await fetch(COUNT_GET);
+    if(!r.ok) throw new Error();
+    const d=await r.json();
+    return d.value||0;
+  }catch(e){
+    return parseInt(localStorage.getItem('dbf_count')||'0');
+  }
+}
+
+async function incCount(){
+  try{
+    const r=await fetch(COUNT_URL);
+    if(!r.ok) throw new Error();
+    const d=await r.json();
+    localStorage.setItem('dbf_count', String(d.value));
+    return d.value||1;
+  }catch(e){
+    const n=parseInt(localStorage.getItem('dbf_count')||'0')+1;
+    localStorage.setItem('dbf_count',String(n));
+    return n;
+  }
+}
+
+async function loadHomeCounter(){
+  const n=await getCount();
+  const el=document.getElementById('home-counter');
+  if(el) el.textContent=n.toLocaleString();
+}
 loadHomeCounter();
 const ALL_Q=[
-  {ta:'📱 SMS · Smishing',te:'📱 SMS · Smishing',qa:'وصلتك هذه الرسالة النصية. ماذا تفعل؟',qe:"You receive this SMS. What do you do?",fa:'SADAD · سداد',fe:'SADAD',ba:'⚠️ تنبيه عاجل: حسابك سيتم تعليقه خلال ساعتين.\nhttp://sadad-verify-ksa.net/secure',be:'⚠️ URGENT: Your account will be suspended in 2 hours.\nhttp://sadad-verify-ksa.net/secure',oa:['أضغط الرابط فوراً','أتجاهلها وأبلغ عنها كرسالة مزيفة','أرد وأطلب مزيداً من المعلومات','أتصل برقم ظهر في الرسالة'],oe:['Click the link immediately','Ignore it and report it as fake','Reply asking for more information','Call a number from the message'],c:1,xa:'✅ الإجابة الصحيحة: التجاهل والإبلاغ. النطاق sadad-verify-ksa.net ليس النطاق الرسمي لـ SADAD. لغة الإلحاح أسلوب تلاعب كلاسيكي.',xe:"✅ Correct: Ignore and report. The domain sadad-verify-ksa.net is not SADAD's official domain. Urgency language is a classic manipulation tactic."},
-  {ta:'📧 Email · Spoofing',te:'📧 Email · Spoofing',qa:'وصلتك هذه الرسالة الإلكترونية. هل هي حقيقية؟',qe:'You receive this email. Is it legitimate?',fa:'security@alrajhi-bank.verify-now.com',fe:'security@alrajhi-bank.verify-now.com',ba:'عزيزي العميل، تم رصد نشاط مشبوه على حسابك. سجّل الدخول فوراً عبر:\nhttps://alrajhi-bank.verify-now.com/login',be:"Dear Customer, suspicious activity was detected. Login immediately at:\nhttps://alrajhi-bank.verify-now.com/login",oa:['حقيقية — البريد يحتوي اسم الراجحي','احتيالية — النطاق verify-now.com مزيف','حقيقية — الرابط يبدأ بـ HTTPS','لست متأكداً — سأرد وأسأل'],oe:["Legitimate — the email has Al Rajhi's name","Phishing — the domain verify-now.com is fake","Legitimate — the link starts with HTTPS","Not sure — I'll reply and ask"],c:1,xa:"✅ الإجابة الصحيحة: احتيالية. النطاق الحقيقي للراجحي هو alrajhibank.com.sa — verify-now.com هو نطاق المهاجم. HTTPS لا تعني أن الموقع شرعي.",xe:"✅ Correct: Phishing. Al Rajhi's real domain is alrajhibank.com.sa — verify-now.com belongs to the attacker. HTTPS doesn't mean the site is legitimate."},
-  {ta:'📞 Phone · Vishing',te:'📞 Phone · Vishing',qa:'اتصل بك شخص يدّعي أنه من أمان البنك ويطلب رمز OTP. ماذا تفعل؟',qe:'Someone calls claiming to be from bank security and asks for your OTP. What do you do?',fa:'مكالمة واردة — رقم مجهول',fe:'Incoming call — Unknown number',ba:'مرحباً، أنا من فريق الحماية. لاحظنا محاولة اختراق لحسابك. أعطني رمز OTP لإيقاف السرقة فوراً.',be:"Hello, I'm from the security team. We noticed an intrusion attempt. Give me your OTP to stop the theft immediately.",oa:['أعطيه الرمز — الأمر عاجل','أغلق الخط وأتصل بالبنك على رقمه الرسمي','أعطيه الأرقام الأولى فقط','أسأله عن رقم موظفه أولاً'],oe:["Give the OTP — it's urgent","Hang up and call the bank's official number","Give only the first few digits","Ask for his employee number first"],c:1,xa:'✅ الإجابة الصحيحة: أغلق الخط. لا يوجد بنك في العالم يتصل بك ويطلب رمز OTP. رمز OTP موجود تحديداً لمنع الآخرين من الوصول.',xe:"✅ Correct: Hang up. No bank in the world calls you and asks for your OTP. The OTP exists specifically to prevent others from accessing your account."},
-  {ta:'💬 WhatsApp · Baiting',te:'💬 WhatsApp · Baiting',qa:'وصلتك هذه الرسالة على WhatsApp من رقم مجهول. ما هي؟',qe:'You receive this WhatsApp message from an unknown number. What is it?',fa:'+966 5XX XXX XXX',fe:'+966 5XX XXX XXX',ba:'🎉 مبروك! فزت بجائزة iPhone 16 Pro من مسابقة STC! اضغط الرابط خلال 24 ساعة:\nhttp://stc-prize-2026.win/claim',be:'🎉 Congratulations! You won an iPhone 16 Pro from STC! Click within 24 hours:\nhttp://stc-prize-2026.win/claim',oa:['جائزة حقيقية — اضغط الرابط','هجوم إيقاع — تجاهل وحظر الرقم','أرسلها لأصدقائي ليستفيدوا','اتصل بـ STC للتأكد'],oe:['Real prize — click the link','Baiting attack — ignore and block','Forward to friends so they benefit','Call STC to confirm'],c:1,xa:"✅ الإجابة الصحيحة: هجوم إيقاع. لم تشترك في أي مسابقة. '24 ساعة' هو ضغط مصطنع. النطاق stc-prize-2026.win ليس له علاقة بـ STC.",xe:"✅ Correct: Baiting attack. You never entered any contest. '24 hours' is artificial pressure. The domain stc-prize-2026.win has nothing to do with STC."},
-  {ta:'🔒 HTTPS · TLS Abuse',te:'🔒 HTTPS · TLS Abuse',qa:'وصلك رابط لموقع بنكي والمتصفح يظهر قفل 🔒 وHTTPS. هل الموقع آمن؟',qe:'You receive a banking link and the browser shows 🔒 HTTPS. Is it safe?',fa:'شريط العنوان في المتصفح',fe:'Browser address bar',ba:'🔒 https://www.alrajhi-bank-secure.com/login\nالموقع يبدو طبق الأصل من الموقع الرسمي.',be:'🔒 https://www.alrajhi-bank-secure.com/login\nThe page looks identical to the real Al Rajhi website.',oa:['آمن تماماً — القفل وHTTPS ضمان','قد يكون احتيالاً — تحقق من النطاق بدقة','آمن — التصميم مطابق للأصلي','آمن — HTTPS لا تعمل إلا مع الحقيقي'],oe:['Completely safe — padlock and HTTPS guarantee safety','Possibly phishing — carefully check the exact domain','Safe — the design matches the original','Safe — HTTPS only works with real sites'],c:1,xa:'✅ الإجابة الصحيحة: تحقق من النطاق. HTTPS تعني فقط أن الاتصال مشفر. المهاجمون يحصلون على شهادات TLS مجانية. النطاق الحقيقي للراجحي هو alrajhibank.com.sa.',xe:"✅ Correct: Check the domain. HTTPS only means the connection is encrypted. Attackers freely obtain TLS certificates. Al Rajhi's real domain is alrajhibank.com.sa."},
-  {ta:'🏦 Banking · Pretexting',te:'🏦 Banking · Pretexting',qa:'استيقظت على هذه الرسالة في الصباح. ماذا تفعل؟',qe:'You wake up to this message. What do you do?',fa:'noreply@bank-alert-ksa.net',fe:'noreply@bank-alert-ksa.net',ba:'تم خصم 2,850 ريال من حسابك. إذا لم تجرِ هذه العملية اضغط لإلغائها:\nhttp://bky-secure.com/cancel-tx?id=8847',be:"2,850 SAR was deducted from your account. If you didn't do this, click to cancel:\nhttp://bky-secure.com/cancel-tx?id=8847",oa:['أضغط الرابط فوراً لإلغاء العملية','أفتح تطبيق البنك الرسمي وأتحقق','أرسل الرابط لأحد الأسرة للمساعدة','أرد على البريد بكلمة إلغاء'],oe:['Click the link immediately to cancel','Open the official bank app and check directly','Send the link to a family member for help','Reply to the email with the word Cancel'],c:1,xa:'✅ الإجابة الصحيحة: افتح التطبيق الرسمي. الرسالة تستخدم الخوف من خسارة المال. دائماً تحقق عبر التطبيق الرسمي مباشرة.',xe:"✅ Correct: Open the official app. The message exploits fear of financial loss. Always verify through the official app directly."},
-  {ta:'📸 Instagram · Fake Prize',te:'📸 Instagram · Fake Prize',qa:'شاهدت هذا المنشور على Instagram. هل هو حقيقي؟',qe:'You see this post on Instagram. Is it real?',fa:'@stc_ksa_official2026 — 43 متابع',fe:'@stc_ksa_official2026 — 43 followers',ba:'🎊 احتفالاً بيوبيلنا نهدي 500 مشترك جهاز Samsung Galaxy S25! تابع الحساب وأرسل رقمك الوطني في الخاص.',be:'🎊 To celebrate our jubilee we are gifting 500 subscribers a Samsung Galaxy S25! Follow and send your national ID in DM.',oa:['حقيقي — STC شركة معروفة وأثق بها','احتيال — لا شركة تطلب رقمك الوطني عبر DM','سأشارك رقم هاتفي فقط','سأتابع فقط دون إرسال بياناتي'],oe:['Real — STC is a known company I trust','Scam — no company requests national ID via DM','I will share only my phone number','I will just follow without sending any data'],c:1,xa:'✅ الإجابة الصحيحة: احتيال. الحساب جديد وعدد متابعيه ضئيل. STC الرسمية لها حسابات موثقة بعلامة ✓ زرقاء. لا شركة شرعية تطلب رقمك الوطني عبر رسائل خاصة.',xe:'✅ Correct: Scam. The account is new with few followers. Official STC has blue-verified accounts. No legitimate company ever requests your national ID via DM.'},
-  {ta:'💼 Work · CEO Fraud',te:'💼 Work · CEO Fraud',qa:'وصلتك هذه الرسالة على بريد العمل من "مديرك". ماذا تفعل؟',qe:'You receive this work email from "your manager". What do you do?',fa:'ahmed.manager@company-corp.net',fe:'ahmed.manager@company-corp.net',ba:'أنا في اجتماع عاجل ولا أستطيع الرد على المكالمات. أحتاج تحويل 15,000 ريال فوراً. لا تخبر أحداً الآن.',be:"I'm in an urgent meeting. I need you to transfer 15,000 SAR immediately. Don't tell anyone now.",oa:['أحوّل المبلغ فوراً — المدير طلب','أتصل بالمدير مباشرة للتأكد قبل أي إجراء','أرسل نصف المبلغ أولاً','أرسل المبلغ وأخبر المالية لاحقاً'],oe:['Transfer immediately — the manager asked','Call the manager directly to verify first','Send half the amount first to verify','Send then inform finance later'],c:1,xa:"✅ الإجابة الصحيحة: اتصل بالمدير. هذا احتيال CEO. 'لا تخبر أحداً' علامة تحذير واضحة. أي طلب مالي عاجل عبر البريد يتطلب تأكيداً هاتفياً.",xe:"✅ Correct: Call the manager. This is CEO Fraud. 'Don't tell anyone' is a clear red flag. Any urgent financial request via email alone requires phone verification."},
-  {ta:'🔑 University · Harvesting',te:'🔑 University · Harvesting',qa:'وصلتك رسالة تطلب تأكيد بيانات حسابك الجامعي. ماذا تفعل؟',qe:'You receive an email to confirm your university account. What do you do?',fa:'noreply@kau-portal.edu-verify.com',fe:'noreply@kau-portal.edu-verify.com',ba:'عزيزي الطالب، انتهت صلاحية حسابك الجامعي. سجّل دخولك هنا قبل الغد:\nhttp://kau-portal.edu-verify.com/renew',be:"Dear Student, your university account expired. Login here before tomorrow:\nhttp://kau-portal.edu-verify.com/renew",oa:['أسجل دخولي فوراً — لا أريد حذف بياناتي','أدخل على البوابة الرسمية للجامعة وأتحقق','أرسل اسم المستخدم فقط دون كلمة المرور','أسأل أصدقائي إن تلقوا نفس الرسالة'],oe:["Login immediately — I don't want data deleted","Go to the university's official portal and check","Send only the username without the password","Ask friends if they received the same message"],c:1,xa:"✅ الإجابة الصحيحة: ادخل على البوابة الرسمية. النطاق edu-verify.com ليس نطاق جامعة الملك عبدالعزيز الرسمي kau.edu.sa.",xe:"✅ Correct: Go to the official portal. The domain edu-verify.com is not KAU's official domain kau.edu.sa."},
-  {ta:'🛡️ Final Challenge',te:'🛡️ Final Challenge',qa:'أيٌّ من هذه العلامات يُشير بوضوح إلى أن الرسالة احتيالية؟',qe:'Which sign clearly indicates that a message is fraudulent?',fa:'سؤال تقييمي نهائي',fe:'Final Assessment Question',ba:'بعد كل ما تعلمته، حدد العلامة الأكثر دلالة على محاولة الاحتيال.',be:"After everything you've learned, identify the most telling sign of a phishing attempt.",oa:['الرسالة مكتوبة بالعربية الفصحى','تطلب التصرف بشكل عاجل جداً وتهددك','الرسالة وصلت في وقت متأخر من الليل','الرسالة من رقم لم تتعامل معه سابقاً'],oe:['The message is written in formal Arabic','It demands urgent action and threatens you','The message arrived late at night',"The message is from a number you haven't interacted with"],c:1,xa:'✅ الإجابة الصحيحة: الإلحاح والتهديد. الإحساس الاصطناعي بالإلحاح هو أكثر علامات التصيد موثوقية. المهاجمون يصممونه عن قصد لإيقاف تفكيرك.',xe:"✅ Correct: Urgency and threats. The artificial sense of urgency is the most reliable phishing indicator. Attackers deliberately design it to stop your critical thinking."}
+  // ── REAL messages (correct answer = حقيقية / Legitimate) ──────────────
+  {ta:'📱 SMS · Real or Fake?',te:'📱 SMS · Real or Fake?',
+   qa:'وصلتك هذه الرسالة النصية. هل هي حقيقية أم احتيال؟',qe:'You receive this SMS. Is it real or a scam?',
+   fa:'البنك الأهلي',fe:'Al Ahli Bank',
+   ba:'تم إضافة مبلغ 3,200 ريال لحسابك. للاستفسار تواصل مع خدمة العملاء على 920008002 أو عبر التطبيق الرسمي.',
+   be:'3,200 SAR has been added to your account. For inquiries contact customer service at 920008002 or via the official app.',
+   oa:['احتيالية — تحاول تسرق بياناتي','حقيقية — لا تحتوي رابطاً ولا تطلب أي بيانات','احتيالية — الأرقام مشبوهة','حقيقية — لكن يجب الاتصال للتأكد'],
+   oe:["Scam — it's trying to steal my data","Legitimate — no link, no data request","Scam — the numbers look suspicious","Legitimate — but I should call to confirm"],
+   c:1,
+   xa:'✅ حقيقية. رسائل البنوك الحقيقية تُخبرك بالعملية دون أن تطلب منك الضغط على رابط أو إدخال بيانات. لاحظ: الرقم 920008002 هو الرقم الرسمي للأهلي.',
+   xe:'✅ Legitimate. Real bank messages notify you without asking you to click any link or enter data. Note: 920008002 is Al Ahli Bank\'s official number.'},
+
+  {ta:'📧 Email · Real or Fake?',te:'📧 Email · Real or Fake?',
+   qa:'وصلتك هذه الرسالة الإلكترونية. هل هي حقيقية أم احتيال؟',qe:'You receive this email. Real or scam?',
+   fa:'noreply@amazon.sa',fe:'noreply@amazon.sa',
+   ba:'طلبك رقم 114-2847736-9284 تم شحنه. يمكن تتبع طلبك عبر التطبيق أو بالدخول على amazon.sa من متصفحك مباشرة.',
+   be:'Your order #114-2847736-9284 has been shipped. Track your order via the app or by visiting amazon.sa directly from your browser.',
+   oa:['احتيالية — البريد يحتوي رقم طلب مزيف','احتيالية — يطلب مني زيارة موقع خارجي','حقيقية — يخبرني بشحن طلب ويوجهني للتطبيق الرسمي','لست متأكداً — سأبحث عن الطلب'],
+   oe:["Scam — the order number is fake","Scam — it asks me to visit an external site","Legitimate — notifies me about shipment and directs me to the official app","Not sure — I'll search for the order"],
+   c:2,
+   xa:'✅ حقيقية. الرسالة لا تحتوي رابطاً مشبوهاً ولا تطلب بيانات، وتوجهك للتطبيق الرسمي أو الموقع الرسمي مباشرة. هذا هو أسلوب رسائل أمازون الحقيقية.',
+   xe:'✅ Legitimate. The message contains no suspicious link and no data request, directing you to the official app or site directly. This is how real Amazon messages look.'},
+
+  {ta:'📱 SMS · Real or Fake?',te:'📱 SMS · Real or Fake?',
+   qa:'وصلتك هذه الرسالة. هل هي حقيقية أم احتيال؟',qe:'You receive this message. Real or scam?',
+   fa:'نفاذ | Nafaz',fe:'Nafaz',
+   ba:'رمز التحقق الخاص بك هو: 847291. صالح لمدة 3 دقائق. لا تشاركه مع أحد.',
+   be:'Your verification code is: 847291. Valid for 3 minutes. Do not share it with anyone.',
+   oa:['احتيالية — الرموز دائماً مزيفة','حقيقية — OTP رسمي طلبته أنا من التطبيق','احتيالية — يجب عدم الثقة بأي رمز OTP','حقيقية — لكن يجب مشاركته للتحقق'],
+   oe:["Scam — codes are always fake","Legitimate — official OTP I requested from the app","Scam — never trust any OTP","Legitimate — but I should share it to verify"],
+   c:1,
+   xa:'✅ حقيقية — إذا طلبته أنت من التطبيق. رسائل OTP الحقيقية تأتي بعد طلبك أنت للدخول، وتقول صراحةً "لا تشاركه مع أحد". الخطر يكون عندما يتصل بك أحد ويطلبه منك.',
+   xe:'✅ Legitimate — if you requested it yourself. Real OTP messages come after you initiate login and explicitly say "Do not share". The danger is when someone calls and asks for it.'},
+
+  {ta:'📧 Email · Real or Fake?',te:'📧 Email · Real or Fake?',
+   qa:'وصلتك هذه الرسالة الإلكترونية. هل هي حقيقية أم احتيال؟',qe:'You receive this email. Real or scam?',
+   fa:'no-reply@stcpay.com.sa',fe:'no-reply@stcpay.com.sa',
+   ba:'تم تسجيل دخول ناجح لحسابك من جهاز جديد في الرياض. إذا لم تكن أنت، يمكنك تأمين حسابك من داخل التطبيق في الإعدادات.',
+   be:'A successful login was recorded on your account from a new device in Riyadh. If this wasn\'t you, you can secure your account from within the app under Settings.',
+   oa:['احتيالية — تريد إخافتي وتسجيل بياناتي','حقيقية — إشعار دخول رسمي يوجهني للتطبيق','احتيالية — يجب الضغط على رابط للتأكيد','حقيقية — لكن يجب تغيير كلمة المرور فوراً'],
+   oe:["Scam — trying to scare me and steal my data","Legitimate — official login alert directing me to the app","Scam — I must click a link to confirm","Legitimate — but I should change my password immediately"],
+   c:1,
+   xa:'✅ حقيقية. إشعارات الدخول الرسمية تُخبرك بالحدث وتوجهك للتطبيق مباشرة بدون روابط مشبوهة. إذا لم تكن أنت من دخل، افتح التطبيق بنفسك وغيّر كلمة المرور.',
+   xe:'✅ Legitimate. Official login alerts inform you of the event and direct you to the app without suspicious links. If it wasn\'t you, open the app yourself and change your password.'},
+
+  // ── FAKE messages (phishing/scam) ──────────────────────────────────────
+  {ta:'📱 SMS · Smishing',te:'📱 SMS · Smishing',
+   qa:'وصلتك هذه الرسالة النصية. ماذا تفعل؟',qe:'You receive this SMS. What do you do?',
+   fa:'SADAD · سداد',fe:'SADAD',
+   ba:'⚠️ تنبيه عاجل: حسابك سيتم تعليقه خلال ساعتين بسبب نشاط مشبوه. يرجى التحقق فوراً:\nhttp://sadad-verify-ksa.net/secure',
+   be:'⚠️ URGENT: Your account will be suspended in 2 hours due to suspicious activity. Verify now:\nhttp://sadad-verify-ksa.net/secure',
+   oa:['أضغط الرابط فوراً لحماية حسابي','أتجاهلها وأبلغ عنها كرسالة مزيفة','أرد وأطلب مزيداً من المعلومات','أتصل برقم ظهر في الرسالة'],
+   oe:['Click the link immediately to protect my account','Ignore it and report it as fake','Reply asking for more information','Call a number from the message'],
+   c:1,
+   xa:'✅ احتيالية. النطاق sadad-verify-ksa.net ليس النطاق الرسمي لـ SADAD. لغة الإلحاح "ساعتين" أسلوب تلاعب كلاسيكي لإيقاف تفكيرك.',
+   xe:'✅ Scam. The domain sadad-verify-ksa.net is not SADAD\'s official domain. The urgency language "2 hours" is a classic manipulation tactic to stop your thinking.'},
+
+  {ta:'📧 Email · Domain Spoofing',te:'📧 Email · Domain Spoofing',
+   qa:'وصلتك هذه الرسالة الإلكترونية. هل هي حقيقية؟',qe:'You receive this email. Is it legitimate?',
+   fa:'security@alrajhi-bank.verify-now.com',fe:'security@alrajhi-bank.verify-now.com',
+   ba:'عزيزي العميل، تم رصد نشاط مشبوه على حسابك. سجّل الدخول فوراً عبر:\nhttps://alrajhi-bank.verify-now.com/login',
+   be:'Dear Customer, suspicious activity was detected. Login immediately at:\nhttps://alrajhi-bank.verify-now.com/login',
+   oa:['حقيقية — البريد يحتوي اسم الراجحي','احتيالية — النطاق verify-now.com مزيف','حقيقية — الرابط يبدأ بـ HTTPS','لست متأكداً — سأرد وأسأل'],
+   oe:["Legitimate — the email has Al Rajhi's name","Phishing — the domain verify-now.com is fake","Legitimate — the link starts with HTTPS","Not sure — I'll reply and ask"],
+   c:1,
+   xa:'✅ احتيالية. النطاق الحقيقي للراجحي هو alrajhibank.com.sa — أما verify-now.com فهو نطاق المهاجم. HTTPS لا تعني أن الموقع شرعي.',
+   xe:'✅ Scam. Al Rajhi\'s real domain is alrajhibank.com.sa — verify-now.com belongs to the attacker. HTTPS doesn\'t mean the site is legitimate.'},
+
+  {ta:'📞 Phone · Vishing',te:'📞 Phone · Vishing',
+   qa:'اتصل بك شخص يدّعي أنه من أمان البنك ويطلب رمز OTP. ماذا تفعل؟',qe:'Someone calls claiming to be from bank security asking for your OTP. What do you do?',
+   fa:'مكالمة واردة — رقم مجهول',fe:'Incoming call — Unknown number',
+   ba:'مرحباً، أنا من فريق الحماية. لاحظنا محاولة اختراق لحسابك. أعطني رمز OTP لإيقاف السرقة فوراً.',
+   be:"Hello, I'm from the security team. We noticed an intrusion attempt. Give me your OTP to stop the theft immediately.",
+   oa:['أعطيه الرمز — الأمر عاجل','أغلق الخط وأتصل بالبنك على رقمه الرسمي','أعطيه الأرقام الأولى فقط','أسأله عن رقم موظفه أولاً'],
+   oe:["Give the OTP — it's urgent","Hang up and call the bank's official number","Give only the first few digits","Ask for his employee number first"],
+   c:1,
+   xa:'✅ احتيالية. لا يوجد بنك في العالم يتصل بك ويطلب رمز OTP. رمز OTP موجود تحديداً لمنع الآخرين من الوصول لحسابك.',
+   xe:"✅ Scam. No bank in the world calls you and asks for your OTP. The OTP exists specifically to prevent others from accessing your account."},
+
+  {ta:'💬 WhatsApp · Baiting',te:'💬 WhatsApp · Baiting',
+   qa:'وصلتك هذه الرسالة على WhatsApp من رقم مجهول. ما هي؟',qe:'You receive this WhatsApp message from an unknown number. What is it?',
+   fa:'+966 5XX XXX XXX',fe:'+966 5XX XXX XXX',
+   ba:'🎉 مبروك! فزت بجائزة iPhone 16 Pro من مسابقة STC! اضغط الرابط خلال 24 ساعة:\nhttp://stc-prize-2026.win/claim',
+   be:'🎉 Congratulations! You won an iPhone 16 Pro from STC! Click within 24 hours:\nhttp://stc-prize-2026.win/claim',
+   oa:['جائزة حقيقية — اضغط الرابط','هجوم إيقاع — تجاهل وحظر الرقم','أرسلها لأصدقائي ليستفيدوا','اتصل بـ STC للتأكد'],
+   oe:['Real prize — click the link','Baiting attack — ignore and block','Forward to friends so they benefit','Call STC to confirm'],
+   c:1,
+   xa:"✅ احتيالية. لم تشترك في أي مسابقة. '24 ساعة' هو ضغط مصطنع لمنعك من التفكير. النطاق stc-prize-2026.win ليس له علاقة بـ STC.",
+   xe:"✅ Scam. You never entered any contest. '24 hours' is artificial pressure. The domain stc-prize-2026.win has nothing to do with STC."},
+
+  {ta:'🔒 HTTPS · TLS Abuse',te:'🔒 HTTPS · TLS Abuse',
+   qa:'وصلك رابط لموقع بنكي والمتصفح يظهر قفل 🔒 وHTTPS. هل الموقع آمن؟',qe:'You receive a banking link and the browser shows 🔒 HTTPS. Is it safe?',
+   fa:'شريط العنوان في المتصفح',fe:'Browser address bar',
+   ba:'🔒 https://www.alrajhi-bank-secure.com/login\nالموقع يبدو طبق الأصل من الموقع الرسمي.',
+   be:'🔒 https://www.alrajhi-bank-secure.com/login\nThe page looks identical to the real Al Rajhi website.',
+   oa:['آمن تماماً — القفل وHTTPS ضمان','قد يكون احتيالاً — تحقق من النطاق بدقة','آمن — التصميم مطابق للأصلي','آمن — HTTPS لا تعمل إلا مع الحقيقي'],
+   oe:['Completely safe — padlock and HTTPS guarantee safety','Possibly phishing — carefully check the exact domain','Safe — the design matches the original','Safe — HTTPS only works with real sites'],
+   c:1,
+   xa:'✅ احتيالية. HTTPS تعني فقط أن الاتصال مشفر — لا تعني أن الموقع شرعي. المهاجمون يحصلون على شهادات TLS مجانية. النطاق الحقيقي للراجحي هو alrajhibank.com.sa.',
+   xe:"✅ Scam. HTTPS only means the connection is encrypted. Attackers freely obtain TLS certificates. Al Rajhi's real domain is alrajhibank.com.sa."},
+
+  {ta:'🏦 Banking · Pretexting',te:'🏦 Banking · Pretexting',
+   qa:'استيقظت على هذه الرسالة في الصباح. ماذا تفعل؟',qe:'You wake up to this message. What do you do?',
+   fa:'noreply@bank-alert-ksa.net',fe:'noreply@bank-alert-ksa.net',
+   ba:'تم خصم 2,850 ريال من حسابك. إذا لم تجرِ هذه العملية اضغط لإلغائها:\nhttp://bky-secure.com/cancel-tx?id=8847',
+   be:"2,850 SAR was deducted from your account. If you didn't do this, click to cancel:\nhttp://bky-secure.com/cancel-tx?id=8847",
+   oa:['أضغط الرابط فوراً لإلغاء العملية','أفتح تطبيق البنك الرسمي وأتحقق','أرسل الرابط لأحد الأسرة للمساعدة','أرد على البريد بكلمة إلغاء'],
+   oe:['Click the link immediately to cancel','Open the official bank app and check directly','Send the link to a family member for help','Reply to the email with the word Cancel'],
+   c:1,
+   xa:'✅ احتيالية. الرسالة تستخدم الخوف من خسارة المال. دائماً تحقق عبر التطبيق الرسمي مباشرة دون الاعتماد على روابط في الرسائل.',
+   xe:"✅ Scam. The message exploits fear of financial loss. Always verify through the official app directly without relying on links in messages."},
+
+  {ta:'📸 Instagram · Fake Account',te:'📸 Instagram · Fake Account',
+   qa:'شاهدت هذا المنشور على Instagram. هل هو حقيقي؟',qe:'You see this post on Instagram. Is it real?',
+   fa:'@stc_ksa_official2026 — 43 متابع',fe:'@stc_ksa_official2026 — 43 followers',
+   ba:'🎊 احتفالاً بيوبيلنا نهدي 500 مشترك جهاز Samsung Galaxy S25! تابع الحساب وأرسل رقمك الوطني في الخاص.',
+   be:'🎊 To celebrate our jubilee we are gifting 500 subscribers a Samsung Galaxy S25! Follow and send your national ID in DM.',
+   oa:['حقيقي — STC شركة معروفة وأثق بها','احتيال — لا شركة تطلب رقمك الوطني عبر DM','سأشارك رقم هاتفي فقط','سأتابع فقط دون إرسال بياناتي'],
+   oe:['Real — STC is a known company I trust','Scam — no company requests national ID via DM','I will share only my phone number','I will just follow without sending any data'],
+   c:1,
+   xa:'✅ احتيالية. الحساب جديد وعدد متابعيه ضئيل. STC الرسمية لها حسابات موثقة بعلامة ✓ زرقاء. لا شركة شرعية تطلب رقمك الوطني عبر رسائل خاصة أبداً.',
+   xe:'✅ Scam. The account is new with few followers. Official STC has blue-verified accounts. No legitimate company ever requests your national ID via DM.'},
+
+  {ta:'💼 Work · CEO Fraud',te:'💼 Work · CEO Fraud',
+   qa:'وصلتك هذه الرسالة على بريد العمل من "مديرك". ماذا تفعل؟',qe:'You receive this work email from "your manager". What do you do?',
+   fa:'ahmed.manager@company-corp.net',fe:'ahmed.manager@company-corp.net',
+   ba:'أنا في اجتماع عاجل ولا أستطيع الرد على المكالمات. أحتاج تحويل 15,000 ريال فوراً. لا تخبر أحداً الآن.',
+   be:"I'm in an urgent meeting. I need you to transfer 15,000 SAR immediately. Don't tell anyone now.",
+   oa:['أحوّل المبلغ فوراً — المدير طلب','أتصل بالمدير مباشرة للتأكد قبل أي إجراء','أرسل نصف المبلغ أولاً','أرسل المبلغ وأخبر المالية لاحقاً'],
+   oe:['Transfer immediately — the manager asked','Call the manager directly to verify first','Send half the amount first to verify','Send then inform finance later'],
+   c:1,
+   xa:"✅ احتيالية. هذا احتيال CEO. 'لا تخبر أحداً' علامة تحذير واضحة. أي طلب مالي عاجل عبر البريد فقط يتطلب تأكيداً هاتفياً.",
+   xe:"✅ Scam. This is CEO Fraud. 'Don't tell anyone' is a clear red flag. Any urgent financial request via email alone requires phone verification."},
+
+  {ta:'🔑 University · Harvesting',te:'🔑 University · Harvesting',
+   qa:'وصلتك رسالة تطلب تأكيد بيانات حسابك الجامعي. ماذا تفعل؟',qe:'You receive an email to confirm your university account. What do you do?',
+   fa:'noreply@kau-portal.edu-verify.com',fe:'noreply@kau-portal.edu-verify.com',
+   ba:'عزيزي الطالب، انتهت صلاحية حسابك الجامعي. سجّل دخولك هنا قبل الغد:\nhttp://kau-portal.edu-verify.com/renew',
+   be:"Dear Student, your university account expired. Login here before tomorrow:\nhttp://kau-portal.edu-verify.com/renew",
+   oa:['أسجل دخولي فوراً — لا أريد حذف بياناتي','أدخل على البوابة الرسمية للجامعة وأتحقق','أرسل اسم المستخدم فقط دون كلمة المرور','أسأل أصدقائي إن تلقوا نفس الرسالة'],
+   oe:["Login immediately — I don't want data deleted","Go to the university's official portal and check","Send only the username without the password","Ask friends if they received the same message"],
+   c:1,
+   xa:"✅ احتيالية. النطاق edu-verify.com ليس نطاق جامعة الملك عبدالعزيز الرسمي kau.edu.sa.",
+   xe:"✅ Scam. The domain edu-verify.com is not KAU's official domain kau.edu.sa."},
+
+  {ta:'📱 SMS · Real or Fake?',te:'📱 SMS · Real or Fake?',
+   qa:'وصلتك هذه الرسالة. هل هي حقيقية أم احتيال؟',qe:'You receive this message. Real or scam?',
+   fa:'أبشر | Absher',fe:'Absher',
+   ba:'تم تحديث بيانات حسابك بنجاح. إذا لم تقم بهذا الإجراء، يرجى التواصل مع الدعم عبر التطبيق الرسمي.',
+   be:'Your account information has been updated successfully. If you did not perform this action, please contact support through the official app.',
+   oa:['احتيالية — تريد إخافتي','حقيقية — إشعار رسمي يوجهني للتطبيق بدون رابط مشبوه','احتيالية — يجب أن تحتوي رابطاً','حقيقية — لكن يجب الإبلاغ عنها'],
+   oe:["Scam — it's trying to scare me","Legitimate — official notification directing me to the app without suspicious link","Scam — it should contain a link","Legitimate — but I should report it"],
+   c:1,
+   xa:'✅ حقيقية. إشعارات أبشر الحقيقية تُخبرك بالتحديث وتوجهك للتطبيق الرسمي دون أي رابط خارجي. الخطر يكون عندما تحتوي الرسالة على رابط.',
+   xe:'✅ Legitimate. Real Absher notifications inform you of the update and direct you to the official app without any external link. The danger is when the message contains a link.'},
+
+  {ta:'🎁 Social Media · Fake Giveaway',te:'🎁 Social Media · Fake Giveaway',
+   qa:'شاهدت هذا الإعلان على Snapchat. هل هو حقيقي؟',qe:'You see this ad on Snapchat. Is it real?',
+   fa:'@amazon_sa_official99',fe:'@amazon_sa_official99',
+   ba:'🛍️ أمازون السعودية تحتفل بـ 10 سنوات! أول 1000 مشترك يحصلون على قسيمة شراء 500 ريال. أرسل اسمك ورقم جوالك في الخاص الآن!',
+   be:'🛍️ Amazon Saudi Arabia celebrates 10 years! First 1000 followers get a 500 SAR voucher. Send your name and phone number in DM now!',
+   oa:['حقيقي — أمازون شركة كبيرة وتفعل هذه العروض','احتيال — الحساب ليس الحساب الرسمي وليس موثقاً','حقيقي — الرقم 500 ريال معقول','سأرسل رقم الجوال فقط دون اسمي'],
+   oe:['Real — Amazon is a big company that does these promotions','Scam — the account is not verified and not official','Real — 500 SAR is a reasonable amount','I will send only my phone number without my name'],
+   c:1,
+   xa:'✅ احتيالية. الحساب الرسمي لأمازون السعودية موثق بعلامة زرقاء ✓. أي حساب بدون توثيق يطلب بياناتك الشخصية هو احتيال بالتأكيد.',
+   xe:'✅ Scam. Amazon Saudi Arabia\'s official account has a blue ✓ verification. Any unverified account requesting your personal data is definitely a scam.'},
+
+  {ta:'💳 Banking · Real or Fake?',te:'💳 Banking · Real or Fake?',
+   qa:'وصلتك هذه الرسالة من بنكك. هل هي حقيقية؟',qe:'You receive this message from your bank. Is it legitimate?',
+   fa:'الراجحي | AlRajhi',fe:'AlRajhi Bank',
+   ba:'تنبيه أمني: لا تشارك كلمة مرورك أو رمز OTP مع أي شخص حتى لو ادّعى أنه موظف البنك. البنك لن يطلب ذلك أبداً.',
+   be:'Security Alert: Do not share your password or OTP with anyone even if they claim to be a bank employee. The bank will never ask for that.',
+   oa:['احتيالية — تحاول إخافتي','حقيقية — تنبيه أمني حقيقي لحمايتي','احتيالية — البنوك لا ترسل هذه التنبيهات','حقيقية — لكن يجب الاتصال للتأكد'],
+   oe:["Scam — it's trying to scare me","Legitimate — a real security alert to protect me","Scam — banks don't send these alerts","Legitimate — but I should call to confirm"],
+   c:1,
+   xa:'✅ حقيقية. البنوك ترسل تنبيهات أمنية لتذكيرك بعدم مشاركة بياناتك. هذه الرسالة تحذرك من الاحتيال ولا تطلب منك أي شيء.',
+   xe:'✅ Legitimate. Banks send security reminders to warn you not to share your data. This message protects you from fraud and asks nothing from you.'},
+
+  {ta:'📧 Email · Real or Fake?',te:'📧 Email · Real or Fake?',
+   qa:'وصلتك هذه الرسالة من متجر نون. هل هي حقيقية؟',qe:'You receive this email from Noon. Is it legitimate?',
+   fa:'noreply@noon-delivery.verify-sa.com',fe:'noreply@noon-delivery.verify-sa.com',
+   ba:'عزيزي العميل، طلبك في انتظار التأكيد. يرجى تسجيل الدخول ودفع رسوم التأمين 25 ريال لإتمام التسليم:\nhttps://noon-delivery.verify-sa.com/pay',
+   be:'Dear Customer, your order is awaiting confirmation. Please login and pay 25 SAR insurance fee to complete delivery:\nhttps://noon-delivery.verify-sa.com/pay',
+   oa:['حقيقية — نون شركة معروفة وأثق بها','احتيالية — noon.com لا تطلب رسوم تأمين ونطاقها مختلف','حقيقية — 25 ريال مبلغ بسيط','حقيقية — لكن سأدفع بعد التحقق'],
+   oe:['Legitimate — Noon is a known company I trust','Scam — noon.com never charges insurance fees and the domain is different','Legitimate — 25 SAR is a small amount','Legitimate — but I will pay after verification'],
+   c:1,
+   xa:'✅ احتيالية. النطاق الرسمي لنون هو noon.com — أما verify-sa.com فهو نطاق المهاجم. نون لا تطلب رسوم تأمين أبداً. هذا أسلوب احتيال شائع جداً.',
+   xe:"✅ Scam. Noon's official domain is noon.com — verify-sa.com belongs to the attacker. Noon never charges insurance fees. This is a very common fraud tactic."},
+
+  {ta:'📱 SMS · Real or Fake?',te:'📱 SMS · Real or Fake?',
+   qa:'وصلتك هذه الرسالة النصية من وزارة الصحة. هل هي حقيقية؟',qe:'You receive this SMS from the Ministry of Health. Is it legitimate?',
+   fa:'وزارة الصحة | MOH',fe:'Ministry of Health | MOH',
+   ba:'تذكير: موعدك في مستشفى الملك فهد غداً الساعة 10 صباحاً. لإلغاء الموعد أو تعديله استخدم تطبيق صحتي.',
+   be:'Reminder: Your appointment at King Fahd Hospital is tomorrow at 10 AM. To cancel or modify your appointment use the Seha app.',
+   oa:['احتيالية — وزارة الصحة لا ترسل رسائل','حقيقية — تذكير رسمي بالموعد يوجهني للتطبيق الرسمي','احتيالية — لا يوجد رابط للتأكيد','حقيقية — لكن يجب الاتصال للتأكد'],
+   oe:["Scam — Ministry of Health doesn't send messages","Legitimate — official appointment reminder directing me to the official app","Scam — there's no link for confirmation","Legitimate — but I should call to confirm"],
+   c:1,
+   xa:'✅ حقيقية. رسائل تذكير المواعد الحكومية توجهك للتطبيق الرسمي (صحتي) دون أي رابط مشبوه. هذا هو الأسلوب الصحيح.',
+   xe:'✅ Legitimate. Government appointment reminders direct you to the official app (Seha) without any suspicious link. This is the correct format.'},
+
+  {ta:'🔐 Account · Real or Fake?',te:'🔐 Account · Real or Fake?',
+   qa:'وصلتك هذه الرسالة على إيميلك. هل هي حقيقية؟',qe:'You receive this email. Is it legitimate?',
+   fa:'security-alert@twitter-login.verify.net',fe:'security-alert@twitter-login.verify.net',
+   ba:'تم تسجيل دخول مشبوه لحسابك على X من روسيا. انقر هنا فوراً لتأمين حسابك:\nhttps://twitter-login.verify.net/secure',
+   be:'Suspicious login detected on your X account from Russia. Click here immediately to secure your account:\nhttps://twitter-login.verify.net/secure',
+   oa:['حقيقية — الدخول من روسيا خطير وجدي','احتيالية — النطاق twitter-login.verify.net مزيف وليس من X','حقيقية — يجب التصرف فوراً','حقيقية — لكن سأتصل بـ X للتأكد'],
+   oe:["Legitimate — login from Russia is serious","Scam — the domain twitter-login.verify.net is fake and not from X","Legitimate — I must act immediately","Legitimate — but I'll contact X to confirm"],
+   c:1,
+   xa:'✅ احتيالية. النطاق الرسمي لـ X هو twitter.com أو x.com — أما verify.net فهو نطاق المهاجم. X ترسل تنبيهاتها من x.com فقط.',
+   xe:'✅ Scam. The official domain for X is twitter.com or x.com — verify.net belongs to the attacker. X sends its alerts from x.com only.'},
+
+  {ta:'🛡️ Final Challenge',te:'🛡️ Final Challenge',
+   qa:'أيٌّ من هذه العلامات يُشير بوضوح إلى أن الرسالة احتيالية؟',qe:'Which sign clearly indicates that a message is fraudulent?',
+   fa:'سؤال تقييمي نهائي',fe:'Final Assessment Question',
+   ba:'بعد كل ما تعلمته، حدد العلامة الأكثر دلالة على محاولة الاحتيال.',
+   be:"After everything you've learned, identify the most telling sign of a phishing attempt.",
+   oa:['الرسالة مكتوبة بالعربية الفصحى','تطلب التصرف بشكل عاجل جداً وتهددك بعواقب','الرسالة وصلت في وقت متأخر من الليل','الرسالة من رقم لم تتعامل معه سابقاً'],
+   oe:['The message is written in formal Arabic','It demands urgent action and threatens consequences','The message arrived late at night',"The message is from a number you haven't interacted with before"],
+   c:1,
+   xa:'✅ الإجابة الصحيحة: الإلحاح والتهديد. الإحساس الاصطناعي بالإلحاح هو أكثر علامات التصيد موثوقية. المهاجمون يصممونه عن قصد لإيقاف تفكيرك.',
+   xe:"✅ Correct: Urgency and threats. The artificial sense of urgency is the most reliable phishing indicator. Attackers deliberately design it to stop your critical thinking."}
 ];
-const QSIZE=7;
+const QSIZE=10;
 let curQ=0,score=0,done=false,sessQ=[],sessM=[],sessA=[];
 function shuf(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
 function fmtBody(txt){
